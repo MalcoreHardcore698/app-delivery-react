@@ -1,38 +1,142 @@
-.App {
-  text-align: center;
+:root {
+  --color-accent: #137921;
+  --color-text: black;
+  --color-background: #EDEEF0;
+  --border-radius: 10px;
+  --border: 1px solid #BFBFBF;
+  --box-shadow: 0 0 8px rgba(0, 0, 0, .3);
+  --font-title: normal 400 1.25rem inherit, sans-serif;
+  --gap-offset: 15px;
+  --field-offset: 10px 15px;
+  --transition: all 150ms ease;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html, body, ul, ul li, a, p {
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html, body {
+  background: var(--color-background);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+body {
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.25;
+  color: var(--color-text);
+}
+
+a, a:focus, a:visited, a:hover, a:link {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+button, input, textarea, select,
+button:focus, input:focus,
+textarea:focus, select:focus {
+  outline: none;
+}
+
+button, input, textarea, select {
+  background: none;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  color: var(--color-text);
+  padding: var(--field-offset);
+  transition: var(--transition);
+}
+
+.accent {
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.clear {
+  background: none;
+  border: none;
+  border-radius: 0;
+  text-decoration: initial;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.clear:hover {
+  text-decoration: underline;
+}
+
+.hidden {
+  display: none;
+}
+
+.group-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+}
+.group-checkbox .checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.group-checkbox .checkbox .checkmark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border-radius: var(--border-radius);
+  border: 1px solid gray;
+  flex-basis: 32px;
+  width: 32px;
+  height: 32px;
+  color: gray;
+}
+
+.group-checkbox .checkbox.checked .checkmark {
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
+}
+
+header{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 15px;
+}
+
+main {
+  width: 70%;
+  padding: 0 15%;
+}
+
+main .navbar {
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: var(--gap-offset);
+}
+
+main .navbar a {
+  border: var(--border);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+main .navbar a.active {
+  background: var(--color-accent);
+  color: white;
+}
+
+main .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+main .content .title {
+  color: var(--color-accent);
+  font: var(--font-title);
 }

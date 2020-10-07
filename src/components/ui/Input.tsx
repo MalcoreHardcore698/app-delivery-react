@@ -1,7 +1,27 @@
 import React from 'react'
 
-export default () => {
+interface InputProps {
+    inputRef?: any,
+    name?: string,
+    type?: string,
+    placeholder?: string,
+    hidden?: boolean
+}
+
+export default ({
+    name,
+    type,
+    inputRef,
+    placeholder,
+    hidden=false
+}: InputProps) => {
     return (
-        <p>Input</p>
+        <input
+            name={name}
+            ref={inputRef}
+            type={type ?? 'text'}
+            className={(hidden) ? 'hidden' : ''}
+            placeholder={placeholder ?? 'Введите'}
+        />
     )
 }
