@@ -1,8 +1,7 @@
 import React from 'react'
-import '../../assets/styles/Row.css'
 
-export default ({ children }: { children: any }) => (
-    <div className="row">
+export default ({ children, stretch }: any) => (
+    <div className={`row${(stretch) ? ' stretch' : ''}`}>
         {children}
     </div>
 )

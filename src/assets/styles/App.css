@@ -6,6 +6,7 @@
   --border: 1px solid #BFBFBF;
   --box-shadow: 0 0 8px rgba(0, 0, 0, .095);
   --font-title: normal 400 1.25rem inherit, sans-serif;
+  --font-family: 'Roboto', sans-serif;
   --gap-offset: 15px;
   --field-offset: 10px 15px;
   --transition: all 150ms ease;
@@ -22,9 +23,17 @@ html, body {
 
 body {
   font-size: 1rem;
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--font-family);
   line-height: 1.25;
   color: var(--color-text);
+}
+
+hr {
+  height: 1px;
+  width: 100%;
+  border: none;
+  margin: 0;
+  background: var(--color-background);
 }
 
 a, a:focus, a:visited, a:hover, a:link {
@@ -36,6 +45,11 @@ a, a:focus, a:visited, a:hover, a:link {
 button:focus, input:focus,
 textarea:focus, select:focus {
   outline: none;
+}
+
+input::placeholder, textarea::placeholder {
+  font-size: .875rem;
+  font-family: var(--font-family);
 }
 
 .button, button, input, textarea, select {
@@ -57,6 +71,53 @@ button[disabled] {
   cursor: default;
 }
 
+.buttonset,
+.fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  flex-grow: 1;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  grid-gap: calc(var(--gap-offset) - 5px);
+  flex-grow: 1;
+}
+
+.subtitle {
+  font-weight: 500;
+}
+
+input[type="number"] {
+  width: 35px;
+  flex-grow: 1;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: var(--gap-offset);
+}
+
+.row.stretch {
+  width: 100%;
+}
+
+.row.stretch > * {
+  flex-grow: 1;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  grid-gap: var(--gap-offset);
+}
+
 .accent {
   background: var(--color-accent);
   border: 1px solid var(--color-accent);
@@ -64,14 +125,25 @@ button[disabled] {
 }
 
 .clear {
+  padding: 0;
   background: none;
   border: none;
   border-radius: 0;
-  text-decoration: initial;
+  font-weight: 600;
+  text-decoration: underline;
+  color: var(--color-accent);
 }
 
 .clear:hover {
   text-decoration: underline;
+}
+
+.small {
+  font-size: .675rem;
+  text-decoration: initial;
+  padding: 2px;
+  color: #b1b1b1;
+  background: #f7f7f7;
 }
 
 .hidden {
@@ -182,4 +254,14 @@ main .content form {
 main .content.loading {
   width: 64px;
   height: 64px;
+}
+
+main .content form {
+  flex-grow: 1;
+  width: 100%;
+}
+
+
+main .content form .fieldset {
+  flex-grow: 1;
 }
