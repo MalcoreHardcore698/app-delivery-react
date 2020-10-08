@@ -1,12 +1,12 @@
 import C from './types'
 import { combineReducers } from 'redux'
 
-const postsReducer = (
-  state: Array<any> = [],
+const userReducer = (
+  state: object = {},
   action: any
 ) => {
   switch (action.type) {
-    case C.REQUESTED_SUCCEEDED:
+    case C.LOGIN_SUCCESS:
       return action.payload
     default:
         return state
@@ -14,5 +14,5 @@ const postsReducer = (
 }
 
 export const rootReducers = combineReducers({
-  posts: postsReducer
+  user: userReducer
 })

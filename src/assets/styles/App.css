@@ -4,7 +4,7 @@
   --color-background: #EDEEF0;
   --border-radius: 10px;
   --border: 1px solid #BFBFBF;
-  --box-shadow: 0 0 8px rgba(0, 0, 0, .3);
+  --box-shadow: 0 0 8px rgba(0, 0, 0, .095);
   --font-title: normal 400 1.25rem inherit, sans-serif;
   --gap-offset: 15px;
   --field-offset: 10px 15px;
@@ -32,19 +32,29 @@ a, a:focus, a:visited, a:hover, a:link {
   text-decoration: inherit;
 }
 
-button, input, textarea, select,
+.button, button, input, textarea, select,
 button:focus, input:focus,
 textarea:focus, select:focus {
   outline: none;
 }
 
-button, input, textarea, select {
-  background: none;
+.button, button, input, textarea, select {
+  background: white;
   border: var(--border);
   border-radius: var(--border-radius);
   color: var(--color-text);
   padding: var(--field-offset);
   transition: var(--transition);
+}
+
+.button,
+button {
+  cursor: pointer;
+}
+
+.disabled,
+button[disabled] {
+  cursor: default;
 }
 
 .accent {
@@ -98,8 +108,19 @@ button, input, textarea, select {
 header{
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  padding: 15px;
+  align-items: center;
+  padding: 25px;
+  height: 64px;
+  margin-block-end: 10px;
+}
+
+header aside {
+  height: 100%;
+}
+
+header aside img {
+  height: 100%;
+  object-fit: contain;
 }
 
 main {
@@ -107,10 +128,18 @@ main {
   padding: 0 15%;
 }
 
+main.thin {
+  display: flex;
+  width: fit-content;
+  padding: 0;
+  margin: 0 auto;
+}
+
 main .navbar {
   display: flex;
   flex-wrap: wrap;
   grid-gap: var(--gap-offset);
+  margin-block-end: var(--gap-offset);
 }
 
 main .navbar a {
@@ -119,6 +148,8 @@ main .navbar a {
   box-shadow: var(--box-shadow);
   color: var(--color-text);
   text-decoration: none;
+  text-align: center;
+  flex-grow: 1;
 }
 
 main .navbar a.active {
@@ -134,9 +165,21 @@ main .content {
   background: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
+  padding: var(--gap-offset);
 }
 
 main .content .title {
   color: var(--color-accent);
   font: var(--font-title);
+}
+
+main .content form {
+  display: flex;
+  flex-direction: column;
+  grid-gap: var(--gap-offset);
+}
+
+main .content.loading {
+  width: 64px;
+  height: 64px;
 }

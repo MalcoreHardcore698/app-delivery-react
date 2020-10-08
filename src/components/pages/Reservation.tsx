@@ -2,8 +2,8 @@ import React from 'react'
 
 export default () => {
     return (    
-        <div className="view">
-            <p>View</p>
+        <div className="content">
+            <p>Reservation</p>
         </div>
     )
 }

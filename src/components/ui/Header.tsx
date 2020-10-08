@@ -1,12 +1,12 @@
-import React from 'react'
-import { useAuth } from '../../hooks/auth.hook'
+import React, { useContext } from 'react'
+import { AuthContext } from '../context/Auth'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Button from './Button'
-import Logotype from '../../assets/logotype.png'
+import Logotype from '../../assets/images/logo.png'
 
 export default () => {
-    const { logout } = useAuth()
+    const { logout, isAuthenticated } = useContext(AuthContext)
 
     const handleSignout = () => {
         logout()
@@ -20,9 +20,11 @@ export default () => {
 
             <aside>
                 <p className="company"></p>
-                <Button onClick={handleSignout}>
-                    <FontAwesomeIcon icon={faUser} />
-                </Button>
+                {(isAuthenticated) && (
+                    <Button onClick={handleSignout}>
+                        <FontAwesomeIcon icon={faUser} />
+                    </Button>
+                )}
             </aside>
         </header>
     )

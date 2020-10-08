@@ -1,66 +1,29 @@
 import C from './types'
-import { Post } from '../utils/interfaces'
 
-export const requestPosts = () => {
+// BEGIN LOGIN
+export const login = (form: any) => {
   return {
-    type: C.REQUESTED_POSTS
+    type: C.FETCHED_LOGIN,
+    payload: form
   }
 }
 
-export const requestAddPost = () => {
+export const loginSuccess = (user: any) => {
   return {
-    type: C.REQUESTED_ADD_POST
+    type: C.LOGIN_SUCCESS,
+    payload: user
   }
 }
 
-export const requestEditPost = () => {
+export const loginPending = () => {
   return {
-    type: C.REQUESTED_EDIT_POST
+    type: C.LOGIN_PENDING
   }
 }
-
-export const requestDeletePosts = () => {
-  return {
-    type: C.REQUESTED_DELETE_POSTS
-  }
-}
-
-export const requestSuccess = (posts: Post[]) => {
-  return {
-    type: C.REQUESTED_SUCCEEDED,
-    payload: posts
-  }
-}
+// END LOGIN
 
 export const requestError = () => {
   return {
-    type: C.REQUESTED_FAILED
-  }
-}
-
-export const fetchPosts = () => {
-  return {
-    type: C.FETCHED_POSTS
-  }
-}
-
-export const addPost = (post: Post) => {
-  return {
-    type: C.ADD_POST,
-    payload: post
-  }
-}
-
-export const editPost = (post: Post) => {
-  return {
-    type: C.EDIT_POST,
-    payload: post
-  }
-}
-
-export const deletePosts = (ids: string[]) => {
-  return {
-    type: C.DELETE_POSTS,
-    payload: ids
+    type: C.FETCHED_FAILURE
   }
 }
