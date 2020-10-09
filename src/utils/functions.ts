@@ -53,6 +53,13 @@ export function getMaxPage(data: any, limit: number) {
     return (maxPage - 1)
 }
 
+export function getPath(navigator: Array<string>) {
+    if (!navigator || navigator.length === 0)
+        return null
+
+    return navigator[navigator.length - 1]
+}
+
 export function setCookie(name: string, value: string, expiresDays=30) {
     const date: Date = new Date()
     date.setTime(date.getTime() + (expiresDays * 24*60*60*1000))
