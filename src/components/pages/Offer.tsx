@@ -8,8 +8,9 @@ import {
     Conclusion
 } from '../content/Document'
 
-const members: Array<string> = [
-    'Отправитель', 'Получатель'
+const members: any = [
+    { value: 'sender', label: 'Отправитель' },
+    { value: 'reciever', label: 'Получатель' }
 ]
 
 const routes: Array<RouteProps> = [

@@ -1,6 +1,7 @@
 :root {
-  --color-accent: #137921;
   --color-text: black;
+  --color-gray: #BFBFBF;
+  --color-accent: #137921;
   --color-background: #EDEEF0;
   --border-radius: 10px;
   --border: 1px solid #BFBFBF;
@@ -39,6 +40,24 @@ hr {
 a, a:focus, a:visited, a:hover, a:link {
   color: inherit;
   text-decoration: inherit;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 10px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+dl dt {
+  font-weight: 500;
+}
+
+dl dd {
+  display: flex;
+  grid-gap: 5px;
 }
 
 .button, button, input, textarea, select,
@@ -165,9 +184,28 @@ input[type="number"] {
   display: flex;
   flex-wrap: wrap;
 }
+
+.group-checkbox {
+  flex-direction: column;
+  grid-gap: calc(var(--gap-offset) - 5px);
+}
+
+.group-checkbox .checkbox {
+  display: flex;
+  grid-gap: calc(var(--gap-offset) - 5px);
+}
+
 .group-checkbox .checkbox {
   display: flex;
   align-items: center;
+}
+
+
+.group-checkbox .checkbox,
+.group-checkbox .checkbox label {
+  color: var(--color-gray);
+  cursor: pointer;
+  transition: var(--transition);
 }
 
 .group-checkbox .checkbox .checkmark {
@@ -175,16 +213,24 @@ input[type="number"] {
   justify-content: center;
   align-items: center;
   background: transparent;
-  border-radius: var(--border-radius);
-  border: 1px solid gray;
-  flex-basis: 32px;
-  width: 32px;
-  height: 32px;
-  color: gray;
+  border-radius: calc(var(--border-radius) - 2px);
+  border: 1px solid var(--color-gray);
+  flex-basis: 22px;
+  width: 22px;
+  height: 22px;
+  color: var(--color-gray);
+  font-size: .785rem;
+  transition: var(--transition);
 }
 
 .group-checkbox .checkbox.checked .checkmark {
   border: 1px solid var(--color-text);
+  color: var(--color-text);
+}
+
+.group-checkbox .checkbox.checked,
+.group-checkbox .checkbox.checked label,
+.group-checkbox .checkbox.checked.checked .checkmark {
   color: var(--color-text);
 }
 
@@ -245,6 +291,7 @@ main .content {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  grid-gap: var(--gap-offset);
   background: white;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -265,7 +312,7 @@ main .content form {
   grid-gap: var(--gap-offset);
 }
 
-main .content.loading {
+main .content.loading img {
   width: 64px;
   height: 64px;
 }
@@ -275,9 +322,17 @@ main .content form {
   width: 100%;
 }
 
-
 main .content form .fieldset {
   flex-grow: 1;
+}
+
+main .content form .column {
+  width: 100%;
+}
+
+main .content button.back {
+  text-align: left;
+  width: 100%;
 }
 
 @media only screen and (max-width: 998px) {

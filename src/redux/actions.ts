@@ -27,3 +27,10 @@ export const requestError = () => {
     type: C.FETCHED_FAILURE
   }
 }
+
+export const setForm = (form: any) => {
+  return {
+    type: C.SET_FORM,
+    payload: form
+  }
+}

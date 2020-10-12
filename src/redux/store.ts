@@ -7,20 +7,21 @@ import logger from 'redux-logger'
 
 const sagaMiddleware = createSagaMiddleware()
 
-/*
- * If necessary enable ReduxDevTools
-*/
-/*
-const composeEnhancer =
-  (process.env.NODE_ENV !== 'production' &&
-    window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__']) ||
-  compose
-*/
+declare global {
+  interface Window {
+    __REDUX_DEVTOOLS_EXTENSION__?: typeof compose;
+  }
+}
+
+const composeEnhancers: any = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 
 export const store = createStore(
   rootReducers,
   initial,
-  compose(applyMiddleware(sagaMiddleware, logger))
+  compose(
+    applyMiddleware(sagaMiddleware, logger),
+    composeEnhancers
+  ),
 )
 
 sagaMiddleware.run(rootSaga)

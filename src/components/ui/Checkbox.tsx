@@ -9,38 +9,49 @@ interface CheckmarkProps {
 }
 
 interface CheckboxItemProps {
+    name?: string,
+    inputRef?: any,
     item: CheckmarkProps,
     checked: Array<CheckmarkProps>,
-    onClick: Function
+    onClick: Function,
+    onChange: any
 }
 
 interface CheckboxProps {
-    list: Array<CheckmarkProps>
+    name?: string,
+    inputRef?: any,
+    list: Array<CheckmarkProps>,
+    onChange?: any
 }
 
-const Checkbox = ({ item, checked, onClick }: CheckboxItemProps) => {
+const Checkbox = ({ item, inputRef, name, checked, onClick, onChange }: CheckboxItemProps) => {
     const handleClick = () => {
-        onClick((prev: Array<CheckmarkProps>) =>
-            prev.filter((elem: CheckmarkProps) =>
-                (elem.value === item.value) ? false : item)
-        )
+        const founded = checked.find((elem: any) => elem.value === item.value)
+        const result = (founded)
+            ? checked.filter((elem: any) => elem.value !== item.value)
+            : ([ ...checked, item ])
+
+        if (onChange) onChange(result)
+        onClick(result)
     }
 
     return (
         <div
-            className={`checkbox${checked.find((elem: CheckmarkProps) => elem.value === item.value)}`}
+            className={`checkbox${(checked.find((elem: CheckmarkProps) =>
+                (elem.value === item.value))) ? ' checked' : ''}`}
             onClick={handleClick}
         >
             <div className="checkmark">
-                <FontAwesomeIcon icon={faCheck} />
+                {(checked.find((elem: CheckmarkProps) =>
+                (elem.value === item.value))) && <FontAwesomeIcon icon={faCheck} />}
             </div>
             <label>{item.label}</label>
-            <Input hidden />
+            <Input inputRef={inputRef} name={name} hidden />
         </div>
     )
 }
 
-export default ({ list }: CheckboxProps) => {
+export default ({ inputRef, name, list, onChange }: CheckboxProps) => {
     const [checked, setChecked] = useState([])
 
     return (
@@ -49,8 +60,11 @@ export default ({ list }: CheckboxProps) => {
                 <Checkbox
                     key={index}
                     item={item}
+                    inputRef={inputRef}
+                    name={name}
                     checked={checked}
                     onClick={setChecked}
+                    onChange={onChange}
                 />    
             )}
         </div>
