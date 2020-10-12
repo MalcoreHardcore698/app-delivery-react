@@ -92,3 +92,13 @@ export function clearCookie(name: string) {
     const domain: string = (isDev) ? '' : 'domain=.aidreamer.com;'
     document.cookie = name + `=;expires=Thu, 01 Jan 1970 00:00:00 GMT; ${domain}`;
 }
+
+export function loadLocalStorage(name: string) {
+    const str = localStorage.getItem(name)
+    return (str) && JSON.parse(str)
+}
+
+export function saveLocalStorage(name: string, data: any) {
+    const str = JSON.stringify(data)
+    localStorage.setItem(name, str)
+}

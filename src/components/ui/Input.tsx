@@ -4,6 +4,7 @@ interface InputProps {
     inputRef?: any,
     name?: string,
     type?: string,
+    classNames?: string,
     placeholder?: string,
     defaultValue?: string,
     hidden?: boolean
@@ -13,6 +14,7 @@ export default ({
     name,
     type,
     inputRef,
+    classNames,
     placeholder,
     defaultValue,
     hidden=false
@@ -22,8 +24,8 @@ export default ({
             name={name}
             ref={inputRef}
             type={type ?? 'text'}
+            className={`${(hidden) ? 'hidden ' : ''}${classNames}`}
             defaultValue={defaultValue}
-            className={(hidden) ? 'hidden' : ''}
             placeholder={placeholder ?? 'Введите'}
         />
     )

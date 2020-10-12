@@ -4,6 +4,7 @@ interface TextAreaProps {
     inputRef?: any,
     name?: string,
     type?: string,
+    classNames?: string,
     placeholder?: string,
     defaultValue?: string,
     hidden?: boolean
@@ -12,6 +13,7 @@ interface TextAreaProps {
 export default ({
     name,
     inputRef,
+    classNames,
     placeholder,
     defaultValue,
     hidden=false
@@ -21,7 +23,7 @@ export default ({
             name={name}
             ref={inputRef}
             defaultValue={defaultValue}
-            className={(hidden) ? 'hidden' : ''}
+            className={`${(hidden) ? 'hidden ' : ''}${classNames}`}
             placeholder={placeholder ?? 'Введите'}
         />
     )

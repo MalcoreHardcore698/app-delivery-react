@@ -13,26 +13,40 @@ import Checkbox from './../ui/Checkbox'
 import Button from './../ui/Button'
 import DefinitionList from './../ui/DefinitionList'
 import Definition from './../ui/Definition'
-import { setForm } from '../../redux/actions'
+import { setForm, clearForm, saveTemplate, addToHistory } from '../../redux/actions'
 
-const GeneralFields = ({ register }: any) => {
+const GeneralFields = ({ register, errors }: any) => {
     const state: any = useSelector(state => state)
     
     return (
         <React.Fragment>
             <Row stretch>
                 <Column>
-                    <Subtitle text="Откуда" />
-                    <Input inputRef={register()} name="cityFrom" type="text" defaultValue={state?.form?.cityFrom} placeholder="Откуда" />
+                    <Subtitle text="Откуда *" />
+                    <Input
+                        type="text"
+                        name="cityFrom"
+                        classNames={(errors.cityFrom) ? 'required' : ''}
+                        inputRef={register({ required: true })}
+                        defaultValue={state?.form?.cityFrom}
+                        placeholder="Откуда"
+                    />
                 </Column>
     
                 <Column>
-                    <Subtitle text="Куда" />
-                    <Input inputRef={register()} name="cityTo" type="text" defaultValue={state?.form?.cityTo} placeholder="Куда" />
+                    <Subtitle text="Куда *" />
+                    <Input
+                        type="text"
+                        name="cityTo"
+                        classNames={(errors.cityTo) ? 'required' : ''}
+                        inputRef={register({ required: true })}
+                        defaultValue={state?.form?.cityTo}
+                        placeholder="Куда"
+                    />
                 </Column>
             </Row>
     
-            <Place register={register} />
+            <Place register={register} errors={errors} />
         </React.Fragment>
     )
 }
@@ -46,19 +60,14 @@ export const Introduction: any = ({ jump, members }: any) => {
 
     const handleSubmit: any = (form: any) => {
         if (isMore) jump('/services')
-        setMore(true)
-
         dispatch(setForm(form))
+        setMore(true)
     }
 
-    const handleSaveDraft: any = () => {
-
-    }
-
-    const handleAddPlace = (register: any, getValues: any) => {
+    const handleAddPlace = (register: any, errors: any, getValues: any) => {
         dispatch(setForm(getValues()))
         setPlaces((prev: any) => ([
-            ...prev, <Place register={register} index={prev.length + 1} />
+            ...prev, <Place register={register} errors={errors} index={prev.length + 1} />
         ]))
     }
 
@@ -69,9 +78,9 @@ export const Introduction: any = ({ jump, members }: any) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {({ register, getValues }: any) => (
+            {({ register, errors, getValues }: any) => (
                 <React.Fragment>
-                    <GeneralFields register={register} />
+                    <GeneralFields register={register} errors={errors} />
 
                     {places.map((place: any, index: number) => (
                         <Column key={index} classNames="place">
@@ -81,36 +90,53 @@ export const Introduction: any = ({ jump, members }: any) => {
                         </Column>
                     ))}
                     
-                    <Button onClick={() => handleAddPlace(register, getValues)} classNames="accent clear small">Добавить еще место</Button>
+                    <Button onClick={() => handleAddPlace(register, errors, getValues)} classNames="accent clear small">Добавить еще место</Button>
 
                     {(isMore) && (
                         <React.Fragment>
                             <Row stretch>
                                 <Column>
-                                    <Subtitle text="Дата экспедирования" />
-                                    <Input inputRef={register()} name="dateForward" type="date" defaultValue={state?.form?.dateForward} placeholder="__.__.____" />
+                                    <Subtitle text="Дата экспедирования *" />
+                                    <Input
+                                        type="date"
+                                        name="dateForward"
+                                        inputRef={register({ required: true })}
+                                        defaultValue={state?.form?.dateForward}
+                                        placeholder="__.__.____"
+                                    />
                                 </Column>
 
                                 <Column>
-                                    <FieldSet title="Время">
+                                    <FieldSet title="Время *">
                                         <Field label="с">
-                                            <Input inputRef={register()} name="timeFrom" type="date" defaultValue={state?.form?.timeFrom} placeholder="__:__" />
+                                            <Input
+                                                type="date"
+                                                name="timeFrom"
+                                                inputRef={register({ required: true })}
+                                                defaultValue={state?.form?.timeFrom}
+                                                placeholder="__:__"
+                                            />
                                         </Field>
 
                                         <Field label="до">
-                                            <Input inputRef={register()} name="timeTo" type="date" defaultValue={state?.form?.timeTo} placeholder="__:__" />
+                                            <Input
+                                                type="date"
+                                                name="timeTo"
+                                                inputRef={register({ required: true })}
+                                                defaultValue={state?.form?.timeTo}
+                                                placeholder="__:__"
+                                            />
                                         </Field>
                                     </FieldSet>
                                 </Column>
                             </Row>
 
-                            {members.map((member: string, index: number) => <Member key={index} member={member} register={register} />)}
+                            {members.map((member: string, index: number) => <Member key={index} member={member} register={register} errors={errors} />)}
                         </React.Fragment>
                     )}
 
                     <Row>
                         <Button type="submit" classNames="accent">Далее</Button>
-                        <Button onClick={handleSaveDraft}>Сохранить черновик</Button>
                     </Row>
                 </React.Fragment>
             )}
@@ -124,8 +150,12 @@ export const Services: any = ({ back, jump }: any) => {
 
     const handleSubmit: any = (form: any) => {
         dispatch(setForm({
+            id: state?.history?.length + 1,
             offerType: form?.offerType,
-            services: JSON.parse(form?.services)
+            services: form?.services
+                ? JSON.parse(form.services)
+                : [],
+            createdAt: Date.now()
         }))
         jump('/preview')
     }
@@ -138,7 +168,13 @@ export const Services: any = ({ back, jump }: any) => {
 
                     <Column>
                         <Subtitle text="Дополнительные услуги" />
-                        <Input inputRef={register()} name="offerType" type="text" defaultValue={state?.form?.offerType} placeholder="Тип тарифа" />
+                        <Input
+                            type="text"
+                            name="offerType"
+                            inputRef={register({ required: true })}
+                            defaultValue={state?.form?.offerType}
+                            placeholder="Тип тарифа"
+                        />
 
                         <Checkbox
                             name="services"
@@ -153,7 +189,9 @@ export const Services: any = ({ back, jump }: any) => {
                         />
                     </Column>
 
-                    <Button type="submit">Предпросмотр</Button>
+                    <Row>
+                        <Button type="submit">Предпросмотр</Button>
+                    </Row>
                 </React.Fragment>
             )}
         </Form>
@@ -163,16 +201,24 @@ export const Services: any = ({ back, jump }: any) => {
 
 export const Preview: any = ({ back, jump, text="Отправить заказ" }: any) => {
     const state: any = useSelector(state => state)
+    const dispatch = useDispatch()
+
+    const handleAddToHistory = () => {
+        dispatch(addToHistory(state.form))
+        jump('/done')
+    }
 
     return (
-        <React.Fragment>
+        <div className="preview">
             <Button classNames="accent clear back" onClick={() => back()}>Назад</Button>
     
             {(state.form) ? (
                 <Column>
-                    <DefinitionList>
-                        <Definition text="Вид заявки" detail={state?.form?.offerType} />
-                    </DefinitionList>
+                    {(state?.form?.offerType && (
+                        <DefinitionList>
+                            <Definition text="Вид заявки" detail={state?.form?.offerType} />
+                        </DefinitionList>
+                    ))}
 
                     <DefinitionList>
                         <Definition text="Откуда" detail={state?.form?.cityFrom} />
@@ -183,8 +229,8 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     </DefinitionList>
 
                     <DefinitionList>
-                        {(state?.form?.places || []).map((place: any) =>
-                            <Definition text="Параметры мест" detail={`${place?.weight} кг, ${place?.length}x${place?.width}x${place?.height} м`} />
+                        {(state?.form?.places || []).map((place: any, index: number) =>
+                            <Definition key={index} text="Параметры мест" detail={`${place?.weight} кг, ${place?.length}x${place?.width}x${place?.height} м`} />
                         )}
                     </DefinitionList>
 
@@ -206,10 +252,7 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     <DefinitionList>
                         <Definition text="Отправитель" detail={(
                             <React.Fragment>
-                                <span>{state?.form?.sender?.name},</span>
-                                <span>{state?.form?.sender?.phone},</span>
-                                <span>{state?.form?.sender?.address},</span>
-                                <span>{state?.form?.sender?.company}</span>
+                                {state?.form?.sender?.name}, {state?.form?.sender?.phone}, {state?.form?.sender?.address}, {state?.form?.sender?.company}
                             </React.Fragment>
                         )} />
                     </DefinitionList>
@@ -217,77 +260,181 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     <DefinitionList>
                         <Definition text="Получатель" detail={(
                             <React.Fragment>
-                                <span>{state?.form?.sender?.name},</span>
-                                <span>{state?.form?.sender?.phone},</span>
-                                <span>{state?.form?.sender?.address},</span>
-                                <span>{state?.form?.sender?.company}</span>
+                                {state?.form?.sender?.name}, {state?.form?.sender?.phone}, {state?.form?.sender?.address}, {state?.form?.sender?.company}
                             </React.Fragment>
                         )} />
                     </DefinitionList>
                     
-                    <DefinitionList>
-                        <Definition text="Дополнительные услуги" detail={state?.form?.services?.map((service: any) => service.label).join(', ')} />
-                    </DefinitionList>
+                    {(state?.form?.services?.length > 0) && (
+                        <DefinitionList>
+                            <Definition text="Дополнительные услуги" detail={state?.form?.services?.map((service: any) => service.label).join(', ')} />
+                        </DefinitionList>
+                    )}
                 </Column>
             ) : <p>Form is undefined</p>}
     
-            <Button onClick={() => jump('/done')} classNames="accent">{text}</Button>
+            <Row>
+                <Button onClick={handleAddToHistory} classNames="accent">{text}</Button>
+            </Row>
+        </div>
+    )
+}
+
+export const Conclusion: any = ({ jump, text="Сохранить шаблон" }: any) => {
+    const state: any = useSelector(state => state)
+    const dispatch = useDispatch()
+
+    const handleSaveTemplate = () => {
+        dispatch(saveTemplate(state.form))
+        dispatch(clearForm())
+        jump('/')
+    }
+
+    return (
+        <React.Fragment>
+            <h2>Заказ создан!</h2>
+            <Row>
+                <Button onClick={handleSaveTemplate}>{text}</Button>
+                <Button onClick={() => jump('/offer')} classNames="accent">Новая заявка</Button>
+            </Row>
         </React.Fragment>
     )
 }
 
-export const Conclusion: any = ({ jump, text="Сохранить шаблон" }: any) => (
-    <React.Fragment>
-        <Button onClick={() => jump('/')}>{text}</Button>
-    </React.Fragment>
-)
-
-export const Place: any = ({ register, index=0 }: any) => {
+export const Place: any = ({ index=0, register, errors }: any) => {
     const state: any = useSelector(state => state)
     const _place = state?.form?.places[index]
 
     return (
         <React.Fragment>
-            <FieldSet title="Параметры мест">
+            <FieldSet title="Параметры мест *">
                 <Field label="кг" position="right">
-                    <Input inputRef={register()} name={`[places][${index}][weight]`} type="number" defaultValue={_place?.weight} placeholder="Вес" />
+                    <Input
+                        type="number"
+                        name={`[places][${index}][weight]`}
+                        inputRef={register({ required: true })}
+                        classNames={(state.form && errors[`[places][${index}][weight]`]) ? 'required' : ''}
+                        defaultValue={_place?.weight}
+                        placeholder="Вес"
+                    />
                 </Field>
 
                 <Field label="м" position="right">
-                    <Input inputRef={register()} name={`[places][${index}][length]`} type="number" defaultValue={_place?.length} placeholder="Д" />
-                    <Input inputRef={register()} name={`[places][${index}][width]`} type="number" defaultValue={_place?.width} placeholder="Ш" />
-                    <Input inputRef={register()} name={`[places][${index}][height]`} type="number" defaultValue={_place?.height} placeholder="В" />
+                    <Input
+                        type="number"
+                        name={`[places][${index}][length]`}
+                        inputRef={register({ required: true })}
+                        classNames={(state.form && errors[`[places][${index}][length]`]) ? 'required' : ''}
+                        defaultValue={_place?.length}
+                        placeholder="Д"
+                    />
+                    <Input
+                        type="number"
+                        name={`[places][${index}][width]`}
+                        inputRef={register({ required: true })}
+                        classNames={(state.form && errors[`[places][${index}][width]`]) ? 'required' : ''}
+                        defaultValue={_place?.width}
+                        placeholder="Ш"
+                    />
+                    <Input
+                        type="number"
+                        name={`[places][${index}][height]`}
+                        inputRef={register({ required: true })}
+                        classNames={(state.form && errors[`[places][${index}][height]`]) ? 'required' : ''}
+                        defaultValue={_place?.height}
+                        placeholder="В"
+                    />
                 </Field>
             </FieldSet>
-            <Input inputRef={register()} name={`[places][${index}][description]`} type="text" defaultValue={_place?.description} placeholder="Описание груза" />
+            <Input
+                type="text"
+                name={`[places][${index}][description]`}
+                inputRef={register()}
+                defaultValue={_place?.description}
+                placeholder="Описание груза"
+            />
         </React.Fragment>
     )
 }
 
-export const Member: any = ({ member, register }: any) => {
+export const Member: any = ({ member, register, errors }: any) => {
     const state: any = useSelector(state => state)
     const _member = state?.form[member.value]
 
     return (
-        <FieldSet title={member.label}>
+        <FieldSet title={member.label + ' *'}>
             <Row stretch>
-                <Input inputRef={register()} name={`[${member.value}][name]`} type="text" defaultValue={(_member) && _member?.name} placeholder="ФИО" />
-                <Input inputRef={register()} name={`[${member.value}][phone]`} type="number" defaultValue={(_member) && _member?.phone} placeholder="Телефон" />
-                <Input inputRef={register()} name={`[${member.value}][prefix]`} type="number" defaultValue={(_member) && _member?.prefix} placeholder="Доб." />
+                <Input
+                    type="text"
+                    name={`[${member.value}][name]`}
+                    inputRef={register({ required: true })}
+                    classNames={(errors[`[${member.value}][name]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.name}
+                    placeholder="ФИО"
+                />
+                <Input
+                    type="number"
+                    name={`[${member.value}][phone]`}
+                    inputRef={register({ required: true })}
+                    classNames={(errors[`[${member.value}][phone]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.phone}
+                    placeholder="Телефон"
+                />
+                <Input
+                    type="number"
+                    name={`[${member.value}][prefix]`}
+                    inputRef={register({ required: true })}
+                    classNames={(errors[`[${member.value}][prefix]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.prefix}
+                    placeholder="Доб."
+                />
             </Row>
     
             <Row stretch>
-                <Input inputRef={register()} name={`[${member.value}][company]`} type="text" defaultValue={(_member) && _member?.company} placeholder="Компания" />
+                <Input
+                    type="text"
+                    name={`[${member.value}][company]`}
+                    inputRef={register({ required: true })}
+                    classNames={(errors[`[${member.value}][company]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.company}
+                    placeholder="Компания"
+                />
             </Row>
     
             <Row stretch>
-                <Input inputRef={register()} name={`[${member.value}][street]`} type="text" defaultValue={(_member) && _member?.street} placeholder="Улица" />
-                <Input inputRef={register()} name={`[${member.value}][house]`} type="number" defaultValue={(_member) && _member?.house} placeholder="Дом" />
-                <Input inputRef={register()} name={`[${member.value}][apart]`} type="text" defaultValue={(_member) && _member?.apart} placeholder="Квартира/офис" />
+                <Input
+                    type="text"
+                    name={`[${member.value}][street]`}
+                    inputRef={register({ required: true })}
+                    classNames={(errors[`[${member.value}][street]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.street}
+                    placeholder="Улица"
+                />
+                <Input
+                    type="number"
+                    name={`[${member.value}][house]`}
+                    inputRef={register({ required: true })}
+                    classNames={(errors[`[${member.value}][house]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.house}
+                    placeholder="Дом"
+                />
+                <Input
+                    type="text"
+                    name={`[${member.value}][apart]`}
+                    inputRef={register({ required: true })}
+                    classNames={(errors[`[${member.value}][apart]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.apart}
+                    placeholder="Квартира/офис"
+                />
             </Row>
     
             <Row stretch>
-                <TextArea inputRef={register()} name={`[${member.value}][remark]`} defaultValue={(_member) && _member?.remark} placeholder="Примечание" />
+                <TextArea
+                    name={`[${member.value}][remark]`}
+                    inputRef={register()}
+                    defaultValue={(_member) && _member?.remark}
+                    placeholder="Примечание"
+                />
             </Row>
         </FieldSet>
     )

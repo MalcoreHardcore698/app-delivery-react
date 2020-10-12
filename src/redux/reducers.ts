@@ -17,6 +17,34 @@ function formReducer(state: object={}, action: any) {
         ...state,
         ...action.payload
       }
+    case C.CLEAR_FORM:
+      return null
+    default:
+      return state
+  }
+}
+
+function historyReducer(state: any=[], action: any) {
+  switch (action.type) {
+    case C.ADD_TO_HISTORY:
+      return [
+        ...state,
+        action.payload
+      ]
+    default:
+      return state
+  }
+}
+
+function templatesReducer(state: any=[], action: any) {
+  switch (action.type) {
+    case C.SAVE_TEMPLATE:
+      return [
+        ...state,
+        action.payload
+      ]
+    case C.DELETE_TEMPLATE:
+      return state.filter((template: any) => template.id !== action.payload.id)
     default:
       return state
   }
@@ -24,5 +52,7 @@ function formReducer(state: object={}, action: any) {
 
 export const rootReducers = combineReducers({
   user: userReducer,
-  form: formReducer
+  form: formReducer,
+  history: historyReducer,
+  templates: templatesReducer
 })
