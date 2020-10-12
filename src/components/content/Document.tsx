@@ -45,10 +45,10 @@ export const Introduction: any = ({ jump, members }: any) => {
     const [isMore, setMore] = useState(false)
 
     const handleSubmit: any = (form: any) => {
-        jump('/services')
-        // setMore(true)
+        if (isMore) jump('/services')
+        setMore(true)
 
-        // dispatch(setForm(form))
+        dispatch(setForm(form))
     }
 
     const handleSaveDraft: any = () => {
