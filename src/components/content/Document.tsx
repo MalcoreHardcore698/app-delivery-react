@@ -87,7 +87,7 @@ export const Introduction: any = ({ jump, members }: any) => {
                         <React.Fragment>
                             <Row stretch>
                                 <Column>
-                                    <Subtitle text="Дата экспедирвоания" />
+                                    <Subtitle text="Дата экспедирования" />
                                     <Input inputRef={register()} name="dateForward" type="date" defaultValue={state?.form?.dateForward} placeholder="__.__.____" />
                                 </Column>
 
