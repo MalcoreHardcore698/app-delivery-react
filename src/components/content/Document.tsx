@@ -13,7 +13,14 @@ import Checkbox from './../ui/Checkbox'
 import Button from './../ui/Button'
 import DefinitionList from './../ui/DefinitionList'
 import Definition from './../ui/Definition'
-import { setForm, clearForm, saveTemplate, addToHistory } from '../../redux/actions'
+import {
+    setForm,
+    clearForm,
+    saveTemplate,
+    addToHistory,
+    forwardingRequestCreate,
+    forwardingRequestSaveTemplate
+} from '../../redux/actions'
 
 const GeneralFields = ({ register, errors }: any) => {
     const state: any = useSelector(state => state)
@@ -25,10 +32,10 @@ const GeneralFields = ({ register, errors }: any) => {
                     <Subtitle text="Откуда *" />
                     <Input
                         type="text"
-                        name="cityFrom"
-                        classNames={(errors.cityFrom) ? 'required' : ''}
+                        name="departureCity"
+                        classNames={(errors.departureCity) ? 'required' : ''}
                         inputRef={register({ required: true })}
-                        defaultValue={state?.form?.cityFrom}
+                        defaultValue={state?.form?.departureCity?.description}
                         placeholder="Откуда"
                     />
                 </Column>
@@ -37,10 +44,10 @@ const GeneralFields = ({ register, errors }: any) => {
                     <Subtitle text="Куда *" />
                     <Input
                         type="text"
-                        name="cityTo"
-                        classNames={(errors.cityTo) ? 'required' : ''}
+                        name="destinationCity"
+                        classNames={(errors.destinationCity) ? 'required' : ''}
                         inputRef={register({ required: true })}
-                        defaultValue={state?.form?.cityTo}
+                        defaultValue={state?.form?.destinationCity?.description}
                         placeholder="Куда"
                     />
                 </Column>
@@ -99,9 +106,9 @@ export const Introduction: any = ({ jump, members }: any) => {
                                     <Subtitle text="Дата экспедирования *" />
                                     <Input
                                         type="date"
-                                        name="dateForward"
+                                        name="forwardingDate"
                                         inputRef={register({ required: true })}
-                                        defaultValue={state?.form?.dateForward}
+                                        defaultValue={state?.form?.forwardingDate}
                                         placeholder="__.__.____"
                                     />
                                 </Column>
@@ -157,6 +164,7 @@ export const Services: any = ({ back, jump }: any) => {
                 : [],
             createdAt: Date.now()
         }))
+
         jump('/preview')
     }
 
@@ -170,7 +178,7 @@ export const Services: any = ({ back, jump }: any) => {
                         <Subtitle text="Дополнительные услуги" />
                         <Input
                             type="text"
-                            name="offerType"
+                            name="tariffType"
                             inputRef={register({ required: true })}
                             defaultValue={state?.form?.offerType}
                             placeholder="Тип тарифа"
@@ -204,7 +212,8 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
     const dispatch = useDispatch()
 
     const handleAddToHistory = () => {
-        dispatch(addToHistory(state.form))
+        dispatch(forwardingRequestCreate(state.form))
+
         jump('/done')
     }
 
@@ -216,16 +225,16 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                 <Column>
                     {(state?.form?.offerType && (
                         <DefinitionList>
-                            <Definition text="Вид заявки" detail={state?.form?.offerType} />
+                            <Definition text="Вид заявки" detail={state?.form?.tariffType} />
                         </DefinitionList>
                     ))}
 
                     <DefinitionList>
-                        <Definition text="Откуда" detail={state?.form?.cityFrom} />
+                        <Definition text="Откуда" detail={state?.form?.departureCity?.description} />
                     </DefinitionList>
 
                     <DefinitionList>
-                        <Definition text="Куда" detail={state?.form?.cityTo} />
+                        <Definition text="Куда" detail={state?.form?.destinationCity?.description} />
                     </DefinitionList>
 
                     <DefinitionList>
@@ -235,7 +244,7 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     </DefinitionList>
 
                     <DefinitionList>
-                        <Definition text="Дата экспедирвоания" detail={<Moment date={state?.form?.dateForward} format="DD.MM.YYYY" />} />
+                        <Definition text="Дата экспедирвоания" detail={<Moment date={state?.form?.forwardingDate} format="DD.MM.YYYY" />} />
                     </DefinitionList>
                     
                     <DefinitionList>
@@ -252,7 +261,14 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     <DefinitionList>
                         <Definition text="Отправитель" detail={(
                             <React.Fragment>
-                                {state?.form?.sender?.name}, {state?.form?.sender?.phone}, {state?.form?.sender?.address}, {state?.form?.sender?.company}
+                                {[
+                                    state?.form?.sender?.fullName,
+                                    state?.form?.sender?.phoneNumber,
+                                    state?.form?.sender?.street
+                                ]
+                                    .filter(item => item)
+                                    .join(', ')
+                                }
                             </React.Fragment>
                         )} />
                     </DefinitionList>
@@ -260,7 +276,14 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     <DefinitionList>
                         <Definition text="Получатель" detail={(
                             <React.Fragment>
-                                {state?.form?.sender?.name}, {state?.form?.sender?.phone}, {state?.form?.sender?.address}, {state?.form?.sender?.company}
+                                {[
+                                    state?.form?.recipient?.fullName,
+                                    state?.form?.recipient?.phoneNumber,
+                                    state?.form?.recipient?.street
+                                ]
+                                    .filter(item => item)
+                                    .join(', ')
+                                }
                             </React.Fragment>
                         )} />
                     </DefinitionList>
@@ -285,8 +308,9 @@ export const Conclusion: any = ({ jump, text="Сохранить шаблон" }
     const dispatch = useDispatch()
 
     const handleSaveTemplate = () => {
-        dispatch(saveTemplate(state.form))
+        dispatch(forwardingRequestSaveTemplate(state.form))
         dispatch(clearForm())
+
         jump('/')
     }
 

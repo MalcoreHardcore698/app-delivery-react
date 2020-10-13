@@ -2,6 +2,38 @@ import { Order } from './interfaces'
 
 const isDev: boolean = process.env.NODE_ENV === 'development'
 
+export async function request(
+    url: string,
+    method: string = 'GET',
+    body: string | null = null,
+    headers: any = {},
+    mode: any = 'cors'
+) {
+    try {
+        if (body) {
+            body = JSON.stringify(body)
+            headers['Content-Type'] = 'application/json'
+        }
+
+        const response = await fetch(url, {
+            method,
+            body,
+            headers,
+            mode,
+            credentials: 'include'
+        })
+        const data = await response.json()
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Wrong something')
+        }
+
+        return data
+    } catch (e) {
+        return e
+    }
+}
+
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
         return -1

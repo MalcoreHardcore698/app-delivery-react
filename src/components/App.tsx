@@ -1,15 +1,20 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { AuthContext } from './context/Auth'
+import { useRequest } from '../hooks/request.hook'
 import { useAuth } from '../hooks/auth.hook'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Layout from './Layout'
+import Loading from './ui/Loading'
+import Error from './ui/Error'
 import { saveTemplate, addToHistory } from '../redux/actions'
 import { loadLocalStorage, saveLocalStorage } from '../utils/functions'
-import { localStorageKey } from '../utils/config'
+import { apiHost, localStorageKey } from '../utils/config'
 import '../assets/styles/App.css'
 
 export default () => {
+  const { request, error, loading } = useRequest()
+
   const { sessionID, login, logout } = useAuth()
   const isAuthenticated = !!sessionID
 
@@ -18,18 +23,33 @@ export default () => {
 
   useEffect(() => {
     try {
-      const data = loadLocalStorage(localStorageKey)
+      const fetching = async () => {
+        const url = `${apiHost}/forwardingnote`
+        const data = await request(url)
 
-      data?.history.map((document: any) => dispatch(addToHistory(document)))
-      data?.templates.map((template: any) => dispatch(saveTemplate(template)))
+        const local = loadLocalStorage(localStorageKey)
+        if (data)
+          data?.map((document: any) => dispatch(addToHistory(document)))
+        else
+          local?.history?.map((document: any) => dispatch(addToHistory(document)))
+        local?.templates?.map((template: any) => dispatch(saveTemplate(template)))
+      }
+
+      fetching()
     } catch (err) {
       console.log(err)
     }
-  }, [dispatch])
+  }, [dispatch, request])
 
   useEffect(() => {
-      saveLocalStorage(localStorageKey, state)
+    saveLocalStorage(localStorageKey, state)
   }, [state])
+
+  if (loading)
+    return <Loading />
+
+  if (error)
+    return <Error />
 
   return (
     <AuthContext.Provider value={{

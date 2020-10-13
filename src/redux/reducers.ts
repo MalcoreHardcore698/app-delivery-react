@@ -38,13 +38,15 @@ function historyReducer(state: any=[], action: any) {
 
 function templatesReducer(state: any=[], action: any) {
   switch (action.type) {
+    case C.SET_TEMPLATES:
+      return action.payload
     case C.SAVE_TEMPLATE:
       return [
         ...state,
         action.payload
       ]
     case C.DELETE_TEMPLATE:
-      return state.filter((template: any) => template.id !== action.payload.id)
+      return state.filter((template: any) => template.number !== action.payload.number)
     default:
       return state
   }

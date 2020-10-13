@@ -403,6 +403,11 @@ main .content table tr td span{
   display: flex;
 }
 
+main .content.loading,
+main .content.error {
+  margin-top: 115px;
+}
+
 @media only screen and (max-width: 998px) {
   main {
     padding: 0 25px 45px 25px;

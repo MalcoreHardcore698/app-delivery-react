@@ -1,17 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import Button from '../ui/Button'
 import { useSelector, useDispatch } from 'react-redux'
-import { deleteTemplate } from '../../redux/actions'
+import {
+    forwardingRequestTemplates,
+    forwardingRequestDeleteTemplate
+} from '../../redux/actions'
 
 export default () => {
     const state: any = useSelector(state => state)
     const dispatch = useDispatch()
 
     const handleDeleteTemplate = (template: any) => {
-        dispatch(deleteTemplate(template))
+        dispatch(forwardingRequestDeleteTemplate(template))
     }
+
+    useEffect(() => {
+        dispatch(forwardingRequestTemplates())
+    }, [dispatch])
     
     return (    
         <div className="content">
