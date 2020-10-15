@@ -1,15 +1,16 @@
-import React, { useContext } from 'react'
-import { AuthContext } from '../context/Auth'
+import React from 'react'
+import { useDispatch } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Button from './Button'
+import { logout } from '../../redux/actions'
 import Logotype from '../../assets/images/logo.png'
 
-export default () => {
-    const { logout, isAuthenticated } = useContext(AuthContext)
+export default ({ isAuthenticated }: any) => {
+    const dispatch = useDispatch()
 
     const handleSignout = () => {
-        logout()
+        dispatch(logout())
     }
 
     return (

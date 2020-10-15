@@ -1,5 +1,4 @@
-import React, { useContext } from 'react'
-import { AuthContext } from '../context/Auth'
+import React from 'react'
 import { useDispatch } from 'react-redux'
 import Form from './../ui/Form'
 import Input from './../ui/Input'
@@ -7,12 +6,10 @@ import Button from './../ui/Button'
 import { login } from '../../redux/actions'
 
 export default () => {
-    const auth: any = useContext(AuthContext)
     const dispatch = useDispatch()
 
     const handleSubmit: any = (form: any) => {
         dispatch(login(form))
-        auth.login(form?.login)
     }
 
     return (

@@ -1,3 +1,4 @@
+import { clearCookie } from '../utils/functions'
 import C from './types'
 
 // BEGIN GENERAL
@@ -9,6 +10,12 @@ export const requestError = () => {
 // END GENERAL
 
 // BEGIN AUTH
+export const auth = () => {
+  return {
+    type: C.FETCHED_AUTH
+  }
+}
+
 export const login = (form: any) => {
   return {
     type: C.FETCHED_LOGIN,
@@ -16,21 +23,22 @@ export const login = (form: any) => {
   }
 }
 
-export const logout = (form: any) => {
+export const logout = () => {
   return {
-    type: C.FETCHED_LOGOUT,
-    payload: form
+    type: C.FETCHED_LOGOUT
   }
 }
 
-export const loginSuccess = (user: any) => {
+export const loginSuccess = (token: any) => {
   return {
     type: C.LOGIN_SUCCESS,
-    payload: user
+    payload: token
   }
 }
 
 export const logoutSuccess = () => {
+  clearCookie('.AspNetCore.Cookies')
+
   return {
     type: C.LOGOUT_SUCCESS
   }
@@ -38,6 +46,19 @@ export const logoutSuccess = () => {
 // END AUTH
 
 // BEGIN FORWARDING REQUEST
+export const setForwardingRequest = (forwardingRequest: any) => {
+  return {
+    type: C.SET_FORWARDING_REQUEST,
+    payload: forwardingRequest
+  }
+}
+
+export const forwardingRequest = () => {
+  return {
+    type: C.FETCHED_FORWARDING_REQUEST
+  }
+}
+
 export const forwardingRequestCreate = (form: any) => {
   return {
     type: C.FETCHED_FORWARDING_REQUEST_CREATE,
@@ -127,3 +148,10 @@ export const deleteTemplate = (template: any) => {
   }
 }
 // END TEMPLATE
+
+export const setLoading = (value: boolean) => {
+  return {
+    type: C.SET_LOADING,
+    payload: value
+  }
+}

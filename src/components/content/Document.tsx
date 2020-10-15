@@ -11,6 +11,8 @@ import Input from './../ui/Input'
 import TextArea from './../ui/TextArea'
 import Checkbox from './../ui/Checkbox'
 import Button from './../ui/Button'
+import Select from './../ui/Select'
+import DatePicker from './../ui/DatePicker'
 import DefinitionList from './../ui/DefinitionList'
 import Definition from './../ui/Definition'
 import {
@@ -20,25 +22,35 @@ import {
     forwardingRequestSaveTemplate
 } from '../../redux/actions'
 
-const GeneralFields = ({ register, errors }: any) => {
+interface CityProps {
+    disabled: boolean,
+    group: string,
+    selected: boolean,
+    text: string,
+    value: string
+}
+
+const GeneralFields = ({ register, errors, setValue }: any) => {
     const state: any = useSelector(state => state)
     
     return (
         <React.Fragment>
             <Row stretch>
                 <Column>
-                    <Subtitle text="Откуда *" />
-                    <Input
-                        type="text"
-                        name="departureCity"
-                        classNames={(errors.departureCity) ? 'required' : ''}
-                        inputRef={register({ required: true })}
-                        defaultValue={state?.form?.departureCity?.description}
-                        placeholder="Откуда"
+                    <Subtitle text="Город *" />
+
+                    <Select
+                        options={state.forwardingRequest.cityItemsList.map((city: CityProps) => ({
+                            label: city.text, value: city.value
+                        }))}
+                        onChange={(e: any) => {
+                            setValue('departureCity', e.value)
+                        }}
+                        placeholder="Город"
                     />
                 </Column>
     
-                <Column>
+                {/*<Column>
                     <Subtitle text="Куда *" />
                     <Input
                         type="text"
@@ -48,7 +60,7 @@ const GeneralFields = ({ register, errors }: any) => {
                         defaultValue={state?.form?.destinationCity?.description}
                         placeholder="Куда"
                     />
-                </Column>
+                </Column>*/}
             </Row>
     
             <Place register={register} errors={errors} />
@@ -102,34 +114,40 @@ export const Introduction: any = ({ jump, members }: any) => {
                             <Row stretch>
                                 <Column>
                                     <Subtitle text="Дата экспедирования *" />
-                                    <Input
-                                        type="date"
+                                    <DatePicker
                                         name="forwardingDate"
-                                        inputRef={register({ required: true })}
-                                        defaultValue={state?.form?.forwardingDate}
-                                        placeholder="__.__.____"
+                                        ref={register({ required: true })}
+                                        selected={state?.form?.forwardingDate}
+                                        dateFormat="dd.MM.yyyy"
+                                        locale="ru"
                                     />
                                 </Column>
 
                                 <Column>
                                     <FieldSet title="Время *">
                                         <Field label="с">
-                                            <Input
-                                                type="date"
+                                            <DatePicker
                                                 name="timeFrom"
-                                                inputRef={register({ required: true })}
-                                                defaultValue={state?.form?.timeFrom}
-                                                placeholder="__:__"
+                                                ref={register({ required: true })}
+                                                selected={state?.form?.timeFrom}
+                                                showTimeSelect
+                                                showTimeSelectOnly
+                                                timeIntervals={15}
+                                                dateFormat="h:mm aa"
+                                                locale="ru"
                                             />
                                         </Field>
 
                                         <Field label="до">
-                                            <Input
-                                                type="date"
+                                            <DatePicker
                                                 name="timeTo"
-                                                inputRef={register({ required: true })}
-                                                defaultValue={state?.form?.timeTo}
-                                                placeholder="__:__"
+                                                ref={register({ required: true })}
+                                                selected={state?.form?.timeTo}
+                                                showTimeSelect
+                                                showTimeSelectOnly
+                                                timeIntervals={15}
+                                                dateFormat="h:mm aa"
+                                                locale="ru"
                                             />
                                         </Field>
                                     </FieldSet>

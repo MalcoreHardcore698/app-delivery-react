@@ -9,7 +9,7 @@ import '../assets/styles/App.css'
 export default ({ isAuthenticated }: any) => {
   return (
     <React.Fragment>
-        <Header />
+        <Header isAuthenticated={isAuthenticated} />
         <Switch>
             {(isAuthenticated) && (
                 <React.Fragment>

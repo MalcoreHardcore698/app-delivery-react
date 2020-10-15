@@ -1,6 +1,7 @@
 export default {
-  user: {},
+  user: null,
   form: null,
   history: [],
-  templates: []
+  templates: [],
+  forwardingRequest: null
 }

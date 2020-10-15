@@ -1,7 +1,5 @@
 import { Order } from './interfaces'
 
-const isDev: boolean = process.env.NODE_ENV === 'development'
-
 export async function request(
     url: string,
     method: string = 'GET',
@@ -95,9 +93,8 @@ export function setCookie(name: string, value: string, expiresDays=30) {
     const date: Date = new Date()
     date.setTime(date.getTime() + (expiresDays * 24*60*60*1000))
     const expires: string = "expires="+ date.toUTCString()
-    const domain: string = (isDev) ? '' : 'domain=.aidreamer.com;'
 
-    document.cookie = `${name}=${JSON.stringify(value)};${expires};${domain}path=/`
+    document.cookie = `${name}=${JSON.stringify(value)};${expires};path=/`
 }
 
 export function getCookie(cname: string) {
@@ -120,8 +117,7 @@ export function getCookie(cname: string) {
 }
 
 export function clearCookie(name: string) {
-    const domain: string = (isDev) ? '' : 'domain=.aidreamer.com;'
-    document.cookie = name + `=;expires=Thu, 01 Jan 1970 00:00:00 GMT; ${domain}`;
+    document.cookie = name + `=;expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
 }
 
 export function loadLocalStorage(name: string) {

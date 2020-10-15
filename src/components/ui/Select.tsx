@@ -1,22 +1,8 @@
 import React from 'react'
 import Select from 'react-select'
 
-interface SelectItemProps {
-    label: string,
-    value: string
-}
-
-interface SelectProps {
-    list: Array<SelectItemProps>
-}
-
-export default ({ list }: SelectProps) => {
+export default (props: any) => {
     return (
-        <Select
-            options={list}
-            onChange={(e) => {
-
-            }}
-        />
+        <Select {...props} />
     )
 }
