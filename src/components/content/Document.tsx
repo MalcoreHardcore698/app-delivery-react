@@ -40,7 +40,7 @@ const GeneralFields = ({ register, errors, setValue }: any) => {
                     <Subtitle text="Город *" />
 
                     <Select
-                        options={state.forwardingRequest.cityItemsList.map((city: CityProps) => ({
+                        options={(state?.forwardingRequest?.cityItemsList || []).map((city: CityProps) => ({
                             label: city.text, value: city.value
                         }))}
                         onChange={(e: any) => {
@@ -49,18 +49,6 @@ const GeneralFields = ({ register, errors, setValue }: any) => {
                         placeholder="Город"
                     />
                 </Column>
-    
-                {/*<Column>
-                    <Subtitle text="Куда *" />
-                    <Input
-                        type="text"
-                        name="destinationCity"
-                        classNames={(errors.destinationCity) ? 'required' : ''}
-                        inputRef={register({ required: true })}
-                        defaultValue={state?.form?.destinationCity?.description}
-                        placeholder="Куда"
-                    />
-                </Column>*/}
             </Row>
     
             <Place register={register} errors={errors} />

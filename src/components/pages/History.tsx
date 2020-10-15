@@ -12,6 +12,7 @@ export default () => {
 
     const data: any = useMemo(
         () => {
+            if (!Array.isArray(state.history)) return null
             return state.history.map((trace: any) => ({
                 number: trace?.number,
                 date: <Moment date={trace?.date} format="DD.MM.YYYY" />,

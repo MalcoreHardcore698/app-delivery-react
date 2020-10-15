@@ -2,7 +2,10 @@ import React from 'react'
 import { useTable } from 'react-table'
 
 export default ({ columns, data }: any) => {
-    const tableInstance = useTable({ columns, data })
+    const tableInstance = useTable({
+        columns: Array.isArray(columns) ? columns : [],
+        data: Array.isArray(data) ? data : []
+    })
 
     const {
         getTableProps,
