@@ -16,8 +16,6 @@ import Definition from './../ui/Definition'
 import {
     setForm,
     clearForm,
-    saveTemplate,
-    addToHistory,
     forwardingRequestCreate,
     forwardingRequestSaveTemplate
 } from '../../redux/actions'

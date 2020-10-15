@@ -6,8 +6,7 @@ export async function request(
     url: string,
     method: string = 'GET',
     body: string | null = null,
-    headers: any = {},
-    mode: any = 'cors'
+    headers: any = {}
 ) {
     try {
         if (body) {
@@ -19,7 +18,7 @@ export async function request(
             method,
             body,
             headers,
-            mode,
+            mode: 'no-cors',
             credentials: 'include'
         })
         const data = await response.json()

@@ -22,7 +22,7 @@ export default () => {
                 <Form onSubmit={handleSubmit}>
                     {({ register }: any) => (
                         <React.Fragment>
-                            <Input inputRef={register()} name="login" type="text" placeholder="Login" />
+                            <Input inputRef={register()} name="tin" type="text" placeholder="TIN" />
                             <Input inputRef={register()} name="password" type="password" placeholder="Password" />
                             <Button type="submit" classNames="accent">Войти</Button>
                         </React.Fragment>

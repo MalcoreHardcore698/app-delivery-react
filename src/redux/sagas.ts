@@ -16,6 +16,8 @@ import { apiHost } from '../utils/config'
 export function* fetchLoginAsync(action: any) {
   const form: any = action.payload
 
+  console.log(form)
+
   try {
     const data = yield call(async () =>
       await request(`${apiHost}/account/login`, 'POST', form)
