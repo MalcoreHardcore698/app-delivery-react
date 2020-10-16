@@ -4,6 +4,7 @@ interface ButtonProps {
     children?: any,
     component?: any,
     classNames?: string,
+    disabled?: boolean,
     type?: any,
     onClick?: any
 }
@@ -13,6 +14,7 @@ export default ({
     children,
     component,
     classNames,
+    disabled=false,
     onClick
 }: ButtonProps) => {
     if (component) {
@@ -21,13 +23,14 @@ export default ({
     }
 
     const handleClick: any = () => {
-        if (onClick) onClick()
+        if (onClick && !disabled) onClick()
     }
 
     return (
         <button
             type={type ?? 'text'}
             className={classNames}
+            disabled={disabled}
             onClick={handleClick}
         >
             {children ?? 'Unknown Text'}

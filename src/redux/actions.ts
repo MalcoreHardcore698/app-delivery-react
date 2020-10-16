@@ -1,4 +1,3 @@
-import { clearCookie } from '../utils/functions'
 import C from './types'
 
 // BEGIN GENERAL
@@ -37,8 +36,6 @@ export const loginSuccess = (token: any) => {
 }
 
 export const logoutSuccess = () => {
-  clearCookie('.AspNetCore.Cookies')
-
   return {
     type: C.LOGOUT_SUCCESS
   }

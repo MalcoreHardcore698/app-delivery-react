@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import Moment from 'react-moment'
 import Table from '../ui/Table'
-import {
-    forwardingNotes
-} from '../../redux/actions'
+import { forwardingNotes } from '../../redux/actions'
 
 export default () => {
     const state: any = useSelector(state => state)
@@ -15,7 +12,11 @@ export default () => {
             if (!Array.isArray(state.history)) return null
             return state.history.map((trace: any) => ({
                 number: trace?.number,
-                date: <Moment date={trace?.date} format="DD.MM.YYYY" />,
+                date: new Date(trace?.date).toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                }),
                 points: (
                     <React.Fragment>
                         <span>{trace?.departureCity?.description}</span>
@@ -34,7 +35,7 @@ export default () => {
                         <span>{trace?.volume}</span>
                     </React.Fragment>
                 ),
-                state: trace?.state || 'Прибыл на склад'
+                state: trace?.getStateName
             }))
         },
         [state]
@@ -43,27 +44,42 @@ export default () => {
     const columns: any = useMemo(
         () => [
             {
-                Header: '№ Заказа',
+                header: '№ Заказа',
                 accessor: 'number',
             },
             {
-                Header: 'Дата заказа',
+                header: 'Дата заказа',
                 accessor: 'date',
             },
             {
-                Header: <React.Fragment><span>Откуда</span><span>Куда</span></React.Fragment>,
+                header: (
+                    <React.Fragment>
+                        <span>Откуда</span>
+                        <span>Куда</span>
+                    </React.Fragment>
+                ),
                 accessor: 'points',
             },
             {
-                Header: <React.Fragment><span>Отправитель</span><span>Получитель</span></React.Fragment>,
+                header: (
+                    <React.Fragment>
+                        <span>Отправитель</span>
+                        <span>Получитель</span>
+                    </React.Fragment>
+                ),
                 accessor: 'members',
             },
             {
-                Header: <React.Fragment><span>Вес</span><span>Объем</span></React.Fragment>,
+                header: (
+                    <React.Fragment>
+                        <span>Вес</span>
+                        <span>Объем</span>
+                    </React.Fragment>
+                ),
                 accessor: 'specification',
             },
             {
-                Header: 'Статус груза',
+                header: 'Статус груза',
                 accessor: 'state',
             },
         ],

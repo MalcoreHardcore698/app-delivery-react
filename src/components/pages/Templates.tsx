@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import Button from '../ui/Button'
+import Loading from '../ui/Loading'
 import { useSelector, useDispatch } from 'react-redux'
 import {
     forwardingRequestTemplates,
@@ -19,6 +20,9 @@ export default () => {
     useEffect(() => {
         dispatch(forwardingRequestTemplates())
     }, [dispatch])
+
+    if (state.loading)
+        return <Loading />
     
     return (    
         <div className="content">

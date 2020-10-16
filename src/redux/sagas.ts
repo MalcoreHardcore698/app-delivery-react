@@ -56,7 +56,16 @@ export function* fetchLogoutAsync() {
 }
 
 export function* fetchForwardingRequestCreateAsync(action: any) {
-  const form: any = action.payload
+  const form: any = {
+    sender: action.payload.sender,
+    reciever: action.payload.reciever,
+    freightPieces: action.payload.places,
+    ...action.payload.services.map((service: any) => ({
+      [service.value]: true
+    }))
+  }
+
+  yield put(setLoading(true))
 
   try {
     const data = yield call(async () =>
@@ -66,6 +75,8 @@ export function* fetchForwardingRequestCreateAsync(action: any) {
   } catch (error) {
     yield put(requestError())
   }
+
+  yield put(setLoading(false))
 }
 
 export function* fetchForwardingRequestTemplatesAsync() {

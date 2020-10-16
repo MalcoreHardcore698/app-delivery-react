@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import Moment from 'react-moment'
 import Form from './../ui/Form'
 import Row from './../ui/Row'
 import Column from './../ui/Column'
@@ -12,6 +11,7 @@ import TextArea from './../ui/TextArea'
 import Checkbox from './../ui/Checkbox'
 import Button from './../ui/Button'
 import Select from './../ui/Select'
+import AsyncSelect from './../ui/AsyncSelect'
 import DatePicker from './../ui/DatePicker'
 import DefinitionList from './../ui/DefinitionList'
 import Definition from './../ui/Definition'
@@ -21,8 +21,9 @@ import {
     forwardingRequestCreate,
     forwardingRequestSaveTemplate
 } from '../../redux/actions'
+import Loading from '../ui/Loading'
 
-interface CityProps {
+interface SelectItemProps {
     disabled: boolean,
     group: string,
     selected: boolean,
@@ -30,23 +31,41 @@ interface CityProps {
     value: string
 }
 
-const GeneralFields = ({ register, errors, setValue }: any) => {
+const GeneralFields = ({ register, errors, getValues, setValue }: any) => {
     const state: any = useSelector(state => state)
+
+    const departureCity: string = getValues('departureCity')
+    const destinationCity: string = getValues('destinationCity')
     
     return (
         <React.Fragment>
             <Row stretch>
                 <Column>
-                    <Subtitle text="Город *" />
+                    <Subtitle text="Откуда *" />
 
                     <Select
-                        options={(state?.forwardingRequest?.cityItemsList || []).map((city: CityProps) => ({
+                        selected={(departureCity) ? { value: departureCity, label: departureCity } : null}
+                        options={(state?.forwardingRequest?.cityItemsList || []).map((city: SelectItemProps) => ({
                             label: city.text, value: city.value
                         }))}
                         onChange={(e: any) => {
-                            setValue('departureCity', e.value)
+                            setValue('d', e.value)
                         }}
-                        placeholder="Город"
+                        placeholder="Откуда"
+                    />
+                </Column>
+                <Column>
+                    <Subtitle text="Куда *" />
+
+                    <Select
+                        selected={(destinationCity) ? { value: destinationCity, label: destinationCity } : null}
+                        options={(state?.forwardingRequest?.cityItemsList || []).map((city: SelectItemProps) => ({
+                            label: city.text, value: city.value
+                        }))}
+                        onChange={(e: any) => {
+                            setValue('destinationCity', e.value)
+                        }}
+                        placeholder="Откуда"
                     />
                 </Column>
             </Row>
@@ -57,7 +76,6 @@ const GeneralFields = ({ register, errors, setValue }: any) => {
 }
 
 export const Introduction: any = ({ jump, members }: any) => {
-    const state: any = useSelector(state => state)
     const dispatch = useDispatch()
 
     const [places, setPlaces]: any = useState([])
@@ -83,9 +101,14 @@ export const Introduction: any = ({ jump, members }: any) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {({ register, errors, getValues }: any) => (
+            {({ register, errors, getValues, setValue }: any) => (
                 <React.Fragment>
-                    <GeneralFields register={register} errors={errors} />
+                    <GeneralFields
+                        register={register}
+                        errors={errors}
+                        getValues={getValues}
+                        setValue={setValue}
+                    />
 
                     {places.map((place: any, index: number) => (
                         <Column key={index} classNames="place">
@@ -99,25 +122,25 @@ export const Introduction: any = ({ jump, members }: any) => {
 
                     {(isMore) && (
                         <React.Fragment>
-                            <Row stretch>
+                            <Row stretch nowrap>
                                 <Column>
                                     <Subtitle text="Дата экспедирования *" />
-                                    <DatePicker
-                                        name="forwardingDate"
-                                        ref={register({ required: true })}
-                                        selected={state?.form?.forwardingDate}
-                                        dateFormat="dd.MM.yyyy"
-                                        locale="ru"
-                                    />
+                                    <Field>
+                                        <DatePicker
+                                            name="forwardingDate"
+                                            ref={register({ required: true })}
+                                            dateFormat="dd.MM.yyyy"
+                                            locale="ru"
+                                        />
+                                    </Field>
                                 </Column>
 
                                 <Column>
-                                    <FieldSet title="Время *">
+                                    <FieldSet title="Время">
                                         <Field label="с">
                                             <DatePicker
                                                 name="timeFrom"
-                                                ref={register({ required: true })}
-                                                selected={state?.form?.timeFrom}
+                                                ref={register()}
                                                 showTimeSelect
                                                 showTimeSelectOnly
                                                 timeIntervals={15}
@@ -129,8 +152,7 @@ export const Introduction: any = ({ jump, members }: any) => {
                                         <Field label="до">
                                             <DatePicker
                                                 name="timeTo"
-                                                ref={register({ required: true })}
-                                                selected={state?.form?.timeTo}
+                                                ref={register()}
                                                 showTimeSelect
                                                 showTimeSelectOnly
                                                 timeIntervals={15}
@@ -142,7 +164,16 @@ export const Introduction: any = ({ jump, members }: any) => {
                                 </Column>
                             </Row>
 
-                            {members.map((member: string, index: number) => <Member key={index} member={member} register={register} errors={errors} />)}
+                            {members.map((member: any, index: number) =>
+                                <Member
+                                    key={index}
+                                    member={member}
+                                    register={register}
+                                    errors={errors}
+                                    getValues={getValues}
+                                    setValue={setValue}
+                                />
+                            )}
                         </React.Fragment>
                     )}
 
@@ -162,11 +193,10 @@ export const Services: any = ({ back, jump }: any) => {
     const handleSubmit: any = (form: any) => {
         dispatch(setForm({
             id: state?.history?.length + 1,
-            offerType: form?.offerType,
+            tariffType: form?.tariffType,
             services: form?.services
                 ? JSON.parse(form.services)
                 : [],
-            createdAt: Date.now()
         }))
 
         jump('/preview')
@@ -174,38 +204,48 @@ export const Services: any = ({ back, jump }: any) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {({ register, setValue }: any) => (
-                <React.Fragment>
-                    <Button classNames="accent clear back" onClick={() => back()}>Назад</Button>
+            {({ register, setValue, getValues }: any) => {
+                const tariffType: string = getValues('tariffType')
 
-                    <Column>
-                        <Subtitle text="Дополнительные услуги" />
-                        <Input
-                            type="text"
-                            name="tariffType"
-                            inputRef={register({ required: true })}
-                            defaultValue={state?.form?.offerType}
-                            placeholder="Тип тарифа"
-                        />
+                return (
+                    <React.Fragment>
+                        <Button classNames="accent clear back" onClick={() => back()}>Назад</Button>
 
-                        <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('services', JSON.stringify(value))}
-                            list={[
-                                { value: 'lathing', label: 'Обрешетка' },
-                                { value: 'packaging', label: 'Доупаковка' },
-                                { value: 'loaders', label: 'Грузчики' },
-                                { value: 'documents', label: 'Возврат документов' }
-                            ]}
-                        />
-                    </Column>
+                        <Column>
+                            <Subtitle text="Дополнительные услуги" />
+                            <Select
+                                selected={(tariffType) ? { value: tariffType, label: tariffType } : null}
+                                options={(state?.forwardingRequest?.tariffTypes || []).map((city: SelectItemProps) => ({
+                                    label: city.text, value: city.value
+                                }))}
+                                onChange={(e: any) => {
+                                    setValue('tariffType', e.value)
+                                }}
+                                placeholder="Тип тарифа"
+                            />
 
-                    <Row>
-                        <Button type="submit">Предпросмотр</Button>
-                    </Row>
-                </React.Fragment>
-            )}
+                            <Checkbox
+                                name="services"
+                                inputRef={register()}
+                                onChange={(value: any) => setValue('services', JSON.stringify(value))}
+                                list={[
+                                    { value: 'isCrateRequired', label: 'Обрешетка' },
+                                    { value: 'isCreateNew', label: 'Доупаковка' },
+                                    { value: 'isDeliveryRequired', label: 'Грузчики' },
+                                    { value: 'isIncludeVAT', label: 'Учитывать НДС' },
+                                    { value: 'isSameDayForwarding', label: 'Отправка день в день' },
+                                    { value: 'isSumIncludesVAT', label: 'Сумма Включает НДС' },
+                                    { value: 'isUrgentRequest', label: 'Срочная заявка' }
+                                ]}
+                            />
+                        </Column>
+
+                        <Row>
+                            <Button type="submit">Предпросмотр</Button>
+                        </Row>
+                    </React.Fragment>
+                )
+            }}
         </Form>
     )
 }
@@ -217,7 +257,6 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
 
     const handleAddToHistory = () => {
         dispatch(forwardingRequestCreate(state.form))
-
         jump('/done')
     }
 
@@ -234,11 +273,11 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     ))}
 
                     <DefinitionList>
-                        <Definition text="Откуда" detail={state?.form?.departureCity?.description} />
+                        <Definition text="Откуда" detail={state?.form?.departureCity} />
                     </DefinitionList>
 
                     <DefinitionList>
-                        <Definition text="Куда" detail={state?.form?.destinationCity?.description} />
+                        <Definition text="Куда" detail={state?.form?.destinationCity} />
                     </DefinitionList>
 
                     <DefinitionList>
@@ -248,16 +287,29 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     </DefinitionList>
 
                     <DefinitionList>
-                        <Definition text="Дата экспедирвоания" detail={<Moment date={state?.form?.forwardingDate} format="DD.MM.YYYY" />} />
+                        <Definition
+                            text="Дата экспедирвоания"
+                            detail={new Date(state?.form?.timeTo).toLocaleString('ru-RU', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            })}
+                        />
                     </DefinitionList>
                     
                     <DefinitionList>
                         <Definition text="Время" detail={(
                             <React.Fragment>
                                 <span>с </span>
-                                <Moment date={state?.form?.timeFrom} format="HH:mm" />
+                                {new Date(state?.form?.timeFrom).toLocaleString('ru-RU', {
+                                    hour: 'numeric',
+                                    minute: 'numeric'
+                                })}
                                 <span> до </span>
-                                <Moment date={state?.form?.timeTo} format="HH:mm" />
+                                {new Date(state?.form?.timeTo).toLocaleString('ru-RU', {
+                                    hour: 'numeric',
+                                    minute: 'numeric'
+                                })}
                             </React.Fragment>
                         )} />
                     </DefinitionList>
@@ -317,6 +369,9 @@ export const Conclusion: any = ({ jump, text="Сохранить шаблон" }
 
         jump('/')
     }
+
+    if (state.loading)
+        return <Loading />
 
     return (
         <React.Fragment>
@@ -385,21 +440,27 @@ export const Place: any = ({ index=0, register, errors }: any) => {
     )
 }
 
-export const Member: any = ({ member, register, errors }: any) => {
+export const Member: any = ({ member, register, errors, getValues, setValue }: any) => {
     const state: any = useSelector(state => state)
     const _member = state?.form[member.value]
+
+    const name: string = getValues(`[${member.value}][name]`)
 
     return (
         <FieldSet title={member.label + ' *'}>
             <Row stretch>
-                <Input
-                    type="text"
-                    name={`[${member.value}][name]`}
-                    inputRef={register({ required: true })}
-                    classNames={(errors[`[${member.value}][name]`]) ? 'required' : ''}
-                    defaultValue={(_member) && _member?.name}
+                <AsyncSelect
+                    cacheOptions
+                    defaultOptions={(state?.forwardingRequest[member.field] || []).map((city: SelectItemProps) => ({
+                        label: city.text, value: city.value
+                    }))}
+                    selected={(name) ? { value: name, label: name } : null}
+                    onChange={(e: any) => {
+                        setValue(`[${member.value}][name]`, e.value)
+                    }}
                     placeholder="ФИО"
                 />
+
                 <Input
                     type="number"
                     name={`[${member.value}][phone]`}
@@ -439,7 +500,7 @@ export const Member: any = ({ member, register, errors }: any) => {
                     placeholder="Улица"
                 />
                 <Input
-                    type="number"
+                    type="text"
                     name={`[${member.value}][house]`}
                     inputRef={register({ required: true })}
                     classNames={(errors[`[${member.value}][house]`]) ? 'required' : ''}

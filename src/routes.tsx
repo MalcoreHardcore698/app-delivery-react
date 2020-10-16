@@ -3,7 +3,6 @@ import Main from './components/Main'
 
 const History = React.lazy(() => import('./components/pages/History'))
 const Offer = React.lazy(() => import('./components/pages/Offer'))
-const Reservation = React.lazy(() => import('./components/pages/Reservation'))
 const Templates = React.lazy(() => import('./components/pages/Templates'))
 
 export default [
@@ -30,7 +29,7 @@ export default [
         path: '/reservation',
         component: () => (
             <Main>
-                <Reservation />
+                <Offer />
             </Main>
         )
     },
