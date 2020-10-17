@@ -1,4 +1,5 @@
 import C from './types'
+import { apiHost } from '../utils/config'
 
 // BEGIN GENERAL
 export const requestError = () => {
@@ -10,21 +11,41 @@ export const requestError = () => {
 
 // BEGIN AUTH
 export const auth = () => {
-  return {
-    type: C.FETCHED_AUTH
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/account/login`)
+      .then((res) => res.json())
+      .then((data) => dispatch(loginSuccess(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 
 export const login = (form: any) => {
-  return {
-    type: C.FETCHED_LOGIN,
-    payload: form
+  const formData: any = new FormData()
+  formData.append('tin', form.tin)
+  formData.append('password', form.passwrod)
+
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/account/login?tin=${form.tin}&password=${form.password}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: JSON.stringify(form)
+      })
+      .then((res) => res.json())
+      .then((data) => dispatch(loginSuccess(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 
 export const logout = () => {
-  return {
-    type: C.FETCHED_LOGOUT
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/account/logout`, {
+        method: 'POST'
+      })
+      .then((res) => res.json())
+      .then(() => dispatch(logoutSuccess()))
+      .catch(() => dispatch(requestError()))
   }
 }
 
@@ -51,43 +72,76 @@ export const setForwardingRequest = (forwardingRequest: any) => {
 }
 
 export const forwardingRequest = () => {
-  return {
-    type: C.FETCHED_FORWARDING_REQUEST
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/forwardingrequest/create`)
+      .then((res) => res.json())
+      .then((data) => dispatch(setForwardingRequest(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 
 export const forwardingRequestCreate = (form: any) => {
-  return {
-    type: C.FETCHED_FORWARDING_REQUEST_CREATE,
-    payload: form
+  const document: any = {
+    sender: form.sender,
+    reciever: form.reciever,
+    freightPieces: form.places,
+    ...form.services.map((service: any) => ({
+      [service.value]: true
+    }))
+  }
+
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/forwardingrequest/sveastemplate`, {
+        method: 'POST',
+        body: JSON.stringify(document)
+      })
+      .then((res) => res.json())
+      .then((data) => dispatch(addToHistory(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 
 export const forwardingRequestTemplates = () => {
-  return {
-    type: C.FETCHED_FORWARDING_REQUEST_TEMPLATES
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/forwardingrequest/templateindex`)
+      .then((res) => res.json())
+      .then((data) => dispatch(setTemplates(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 
-export const forwardingRequestSaveTemplate = (form: any) => {
-  return {
-    type: C.FETCHED_FORWARDING_REQUEST_SAVE_TEMPLATE,
-    payload: form
+export const forwardingRequestSaveTemplate = (template: any) => {
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/forwardingrequest/sveastemplate`, {
+        method: 'POST',
+        body: JSON.stringify(template)
+      })
+      .then((res) => res.json())
+      .then((data) => dispatch(saveTemplate(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 
 export const forwardingRequestDeleteTemplate = (template: any) => {
-  return {
-    type: C.FETCHED_FORWARDING_REQUEST_DELETE_TEMPLATE,
-    payload: template
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/forwardingrequest/deletetemplateconfirmed`, {
+        method: 'POST',
+        body: JSON.stringify(template)
+      })
+      .then((res) => res.json())
+      .then((data) => dispatch(deleteTemplate(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 // END FORWARDING REQUEST
 
 // BEGIN FORWARDING NOTE
 export const forwardingNotes = () => {
-  return {
-    type: C.FETCHED_FORWARDING_NOTES
+  return async (dispatch: any) => {
+    return await fetch(`${apiHost}/forwardingnote`)
+      .then((res) => res.json())
+      .then((data) => dispatch(setNotes(data)))
+      .catch(() => dispatch(requestError()))
   }
 }
 
