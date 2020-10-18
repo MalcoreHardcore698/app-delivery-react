@@ -133,7 +133,10 @@ export const Introduction: any = ({ jump, members }: any) => {
                                             name="forwardingDate"
                                             ref={register({ required: true })}
                                             selected={state.form?.forwardingDate}
-                                            onChange={(e: any) => dispatch(setForm({ ...getValues(), forwardingDate: e }))}
+                                            onChange={(e: any) => dispatch(setForm({
+                                                ...getValues(),
+                                                forwardingDate: e
+                                            }))}
                                             placeholder="Дата экспедирования"
                                             dateFormat="dd.MM.yyyy"
                                             locale="ru"
@@ -148,7 +151,10 @@ export const Introduction: any = ({ jump, members }: any) => {
                                                 name="timeFrom"
                                                 ref={register()}
                                                 selected={state.form?.timeFrom}
-                                                onChange={(e: any) => dispatch(setForm({ ...getValues(), timeFrom: e }))}
+                                                onChange={(e: any) => dispatch(setForm({
+                                                    ...getValues(),
+                                                    timeFrom: e
+                                                }))}
                                                 showTimeSelect
                                                 showTimeSelectOnly
                                                 timeIntervals={15}
@@ -163,7 +169,10 @@ export const Introduction: any = ({ jump, members }: any) => {
                                                 name="timeTo"
                                                 ref={register()}
                                                 selected={state.form?.timeTo}
-                                                onChange={(e: any) => dispatch(setForm({ ...getValues(), timeTo: e }))}
+                                                onChange={(e: any) => dispatch(setForm({
+                                                    ...getValues(),
+                                                    timeTo: e
+                                                }))}
                                                 showTimeSelect
                                                 showTimeSelectOnly
                                                 timeIntervals={15}
