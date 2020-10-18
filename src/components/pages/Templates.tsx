@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import {
     forwardingRequestTemplates,
     forwardingRequestDeleteTemplate
-} from '../../redux/actions'
+} from '../../redux/creators'
 
 export default () => {
     const state: any = useSelector(state => state)
@@ -20,13 +20,11 @@ export default () => {
     useEffect(() => {
         dispatch(forwardingRequestTemplates())
     }, [dispatch])
-
-    if (state.loading)
-        return <Loading />
     
     return (    
         <div className="content">
-            {(state.templates.length > 0) ?
+            {(state.loading) ? <Loading /> :
+            (state.templates.length > 0) ?
                 <ul className="templates">
                     {state.templates.map((template: any) =>
                         <li className="template" key={template.id}>

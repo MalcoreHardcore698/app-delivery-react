@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Form from './../ui/Form'
 import Row from './../ui/Row'
@@ -11,16 +11,14 @@ import TextArea from './../ui/TextArea'
 import Checkbox from './../ui/Checkbox'
 import Button from './../ui/Button'
 import Select from './../ui/Select'
-import AsyncSelect from './../ui/AsyncSelect'
 import DatePicker from './../ui/DatePicker'
 import DefinitionList from './../ui/DefinitionList'
 import Definition from './../ui/Definition'
+import { setForm, clearForm } from '../../redux/actions'
 import {
-    setForm,
-    clearForm,
     forwardingRequestCreate,
     forwardingRequestSaveTemplate
-} from '../../redux/actions'
+} from '../../redux/creators'
 import Loading from '../ui/Loading'
 
 interface SelectItemProps {
@@ -31,11 +29,12 @@ interface SelectItemProps {
     value: string
 }
 
-const GeneralFields = ({ register, errors, getValues, setValue }: any) => {
+const GeneralFields = ({ register, errors, getValues }: any) => {
     const state: any = useSelector(state => state)
+    const dispatch = useDispatch()
 
-    const departureCity: string = getValues('departureCity')
-    const destinationCity: string = getValues('destinationCity')
+    const departureCity: string = state.form?.departureCity
+    const destinationCity: string = state.form?.destinationCity
     
     return (
         <React.Fragment>
@@ -44,13 +43,12 @@ const GeneralFields = ({ register, errors, getValues, setValue }: any) => {
                     <Subtitle text="Откуда *" />
 
                     <Select
-                        selected={(departureCity) ? { value: departureCity, label: departureCity } : null}
+                        value={departureCity}
+                        defaultValue={departureCity}
                         options={(state?.forwardingRequest?.cityItemsList || []).map((city: SelectItemProps) => ({
                             label: city.text, value: city.value
                         }))}
-                        onChange={(e: any) => {
-                            setValue('d', e.value)
-                        }}
+                        onChange={(e: any) => dispatch(setForm({ ...getValues(), departureCity: e }))}
                         placeholder="Откуда"
                     />
                 </Column>
@@ -58,13 +56,12 @@ const GeneralFields = ({ register, errors, getValues, setValue }: any) => {
                     <Subtitle text="Куда *" />
 
                     <Select
-                        selected={(destinationCity) ? { value: destinationCity, label: destinationCity } : null}
+                        value={destinationCity}
+                        defaultValue={destinationCity}
                         options={(state?.forwardingRequest?.cityItemsList || []).map((city: SelectItemProps) => ({
                             label: city.text, value: city.value
                         }))}
-                        onChange={(e: any) => {
-                            setValue('destinationCity', e.value)
-                        }}
+                        onChange={(e: any) => dispatch(setForm({ ...getValues(), destinationCity: e }))}
                         placeholder="Откуда"
                     />
                 </Column>
@@ -76,12 +73,16 @@ const GeneralFields = ({ register, errors, getValues, setValue }: any) => {
 }
 
 export const Introduction: any = ({ jump, members }: any) => {
+    const state: any = useSelector(state => state)
     const dispatch = useDispatch()
 
-    const [places, setPlaces]: any = useState([])
+    const [freightPieces, setFreightPieces]: any = useState([])
     const [isMore, setMore] = useState(false)
 
     const handleSubmit: any = (form: any) => {
+        if (!state.form?.departureCity || !state.form?.destinationCity)
+            return 
+
         if (isMore) jump('/services')
         dispatch(setForm(form))
         setMore(true)
@@ -89,15 +90,18 @@ export const Introduction: any = ({ jump, members }: any) => {
 
     const handleAddPlace = (register: any, errors: any, getValues: any) => {
         dispatch(setForm(getValues()))
-        setPlaces((prev: any) => ([
+        setFreightPieces((prev: any) => ([
             ...prev, <Place register={register} errors={errors} index={prev.length + 1} />
         ]))
     }
 
     const handleRemovePlace: any = (index: number, getValues: any) => {
         dispatch(setForm(getValues()))
-        setPlaces((prev: any) => prev.filter((_: any, i: number) => i !== index))
+        setFreightPieces((prev: any) => prev.filter((_: any, i: number) => i !== index))
     }
+
+    if (state.loading)
+        return <Loading />
 
     return (
         <Form onSubmit={handleSubmit}>
@@ -107,10 +111,9 @@ export const Introduction: any = ({ jump, members }: any) => {
                         register={register}
                         errors={errors}
                         getValues={getValues}
-                        setValue={setValue}
                     />
 
-                    {places.map((place: any, index: number) => (
+                    {freightPieces.map((place: any, index: number) => (
                         <Column key={index} classNames="place">
                             <hr />
                             {place}
@@ -129,6 +132,9 @@ export const Introduction: any = ({ jump, members }: any) => {
                                         <DatePicker
                                             name="forwardingDate"
                                             ref={register({ required: true })}
+                                            selected={state.form?.forwardingDate}
+                                            onChange={(e: any) => dispatch(setForm({ ...getValues(), forwardingDate: e }))}
+                                            placeholder="Дата экспедирования"
                                             dateFormat="dd.MM.yyyy"
                                             locale="ru"
                                         />
@@ -141,10 +147,13 @@ export const Introduction: any = ({ jump, members }: any) => {
                                             <DatePicker
                                                 name="timeFrom"
                                                 ref={register()}
+                                                selected={state.form?.timeFrom}
+                                                onChange={(e: any) => dispatch(setForm({ ...getValues(), timeFrom: e }))}
                                                 showTimeSelect
                                                 showTimeSelectOnly
                                                 timeIntervals={15}
                                                 dateFormat="h:mm aa"
+                                                placeholder="Начало"
                                                 locale="ru"
                                             />
                                         </Field>
@@ -153,10 +162,13 @@ export const Introduction: any = ({ jump, members }: any) => {
                                             <DatePicker
                                                 name="timeTo"
                                                 ref={register()}
+                                                selected={state.form?.timeTo}
+                                                onChange={(e: any) => dispatch(setForm({ ...getValues(), timeTo: e }))}
                                                 showTimeSelect
                                                 showTimeSelectOnly
                                                 timeIntervals={15}
                                                 dateFormat="h:mm aa"
+                                                placeholder="Конец"
                                                 locale="ru"
                                             />
                                         </Field>
@@ -205,7 +217,7 @@ export const Services: any = ({ back, jump }: any) => {
     return (
         <Form onSubmit={handleSubmit}>
             {({ register, setValue, getValues }: any) => {
-                const tariffType: string = getValues('tariffType')
+                const tariffType: any = state.form?.tariffType
 
                 return (
                     <React.Fragment>
@@ -214,29 +226,56 @@ export const Services: any = ({ back, jump }: any) => {
                         <Column>
                             <Subtitle text="Дополнительные услуги" />
                             <Select
-                                selected={(tariffType) ? { value: tariffType, label: tariffType } : null}
+                                value={tariffType}
+                                defaultValue={tariffType}
                                 options={(state?.forwardingRequest?.tariffTypes || []).map((city: SelectItemProps) => ({
                                     label: city.text, value: city.value
                                 }))}
-                                onChange={(e: any) => {
-                                    setValue('tariffType', e.value)
-                                }}
+                                onChange={(e: any) => dispatch(setForm({ ...getValues(), tariffType: e }))}
                                 placeholder="Тип тарифа"
                             />
 
                             <Checkbox
                                 name="services"
                                 inputRef={register()}
-                                onChange={(value: any) => setValue('services', JSON.stringify(value))}
-                                list={[
-                                    { value: 'isCrateRequired', label: 'Обрешетка' },
-                                    { value: 'isCreateNew', label: 'Доупаковка' },
-                                    { value: 'isDeliveryRequired', label: 'Грузчики' },
-                                    { value: 'isIncludeVAT', label: 'Учитывать НДС' },
-                                    { value: 'isSameDayForwarding', label: 'Отправка день в день' },
-                                    { value: 'isSumIncludesVAT', label: 'Сумма Включает НДС' },
-                                    { value: 'isUrgentRequest', label: 'Срочная заявка' }
-                                ]}
+                                onChange={(value: any) => setValue('isCreateRequired', JSON.stringify(value))}
+                                list={[{ value: 'true', label: 'Обрешетка' }]}
+                            />
+                            <Checkbox
+                                name="services"
+                                inputRef={register()}
+                                onChange={(value: any) => setValue('isCreateNew', JSON.stringify(value))}
+                                list={[{ value: 'true', label: 'Доупаковка' }]}
+                            />
+                            <Checkbox
+                                name="services"
+                                inputRef={register()}
+                                onChange={(value: any) => setValue('isDeliveryRequired', JSON.stringify(value))}
+                                list={[{ value: 'true', label: 'Грузчики' }]}
+                            />
+                            <Checkbox
+                                name="services"
+                                inputRef={register()}
+                                onChange={(value: any) => setValue('isIncludeVAT', JSON.stringify(value))}
+                                list={[{ value: 'true', label: 'Учитывать НДС' }]}
+                            />
+                            <Checkbox
+                                name="services"
+                                inputRef={register()}
+                                onChange={(value: any) => setValue('isSameDayForwarding', JSON.stringify(value))}
+                                list={[{ value: 'true', label: 'Отправка день в день' }]}
+                            />
+                            <Checkbox
+                                name="services"
+                                inputRef={register()}
+                                onChange={(value: any) => setValue('isSumIncludesVAT', JSON.stringify(value))}
+                                list={[{ value: 'true', label: 'Сумма Включает НДС' }]}
+                            />
+                            <Checkbox
+                                name="services"
+                                inputRef={register()}
+                                onChange={(value: any) => setValue('isUrgentRequest', JSON.stringify(value))}
+                                list={[{ value: 'true', label: 'Срочная заявка' }]}
                             />
                         </Column>
 
@@ -273,11 +312,11 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     ))}
 
                     <DefinitionList>
-                        <Definition text="Откуда" detail={state?.form?.departureCity} />
+                        <Definition text="Откуда" detail={state?.form?.departureCity?.label} />
                     </DefinitionList>
 
                     <DefinitionList>
-                        <Definition text="Куда" detail={state?.form?.destinationCity} />
+                        <Definition text="Куда" detail={state?.form?.destinationCity?.label} />
                     </DefinitionList>
 
                     <DefinitionList>
@@ -386,7 +425,9 @@ export const Conclusion: any = ({ jump, text="Сохранить шаблон" }
 
 export const Place: any = ({ index=0, register, errors }: any) => {
     const state: any = useSelector(state => state)
-    const _place = state?.form?.places[index]
+
+    const freightPieces = state?.form?.freightPieces
+    const freightPiece = (freightPieces) ? freightPieces[index] : null
 
     return (
         <React.Fragment>
@@ -394,10 +435,10 @@ export const Place: any = ({ index=0, register, errors }: any) => {
                 <Field label="кг" position="right">
                     <Input
                         type="number"
-                        name={`[places][${index}][weight]`}
+                        name={`[freightPieces][${index}][weight]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[places][${index}][weight]`]) ? 'required' : ''}
-                        defaultValue={_place?.weight}
+                        classNames={(state.form && errors[`[freightPieces][${index}][weight]`]) ? 'required' : ''}
+                        defaultValue={freightPiece?.weight}
                         placeholder="Вес"
                     />
                 </Field>
@@ -405,68 +446,83 @@ export const Place: any = ({ index=0, register, errors }: any) => {
                 <Field label="м" position="right">
                     <Input
                         type="number"
-                        name={`[places][${index}][length]`}
+                        name={`[freightPieces][${index}][length]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[places][${index}][length]`]) ? 'required' : ''}
-                        defaultValue={_place?.length}
+                        classNames={(state.form && errors[`[freightPieces][${index}][length]`]) ? 'required' : ''}
+                        defaultValue={freightPiece?.length}
                         placeholder="Д"
                     />
                     <Input
                         type="number"
-                        name={`[places][${index}][width]`}
+                        name={`[freightPieces][${index}][width]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[places][${index}][width]`]) ? 'required' : ''}
-                        defaultValue={_place?.width}
+                        classNames={(state.form && errors[`[freightPieces][${index}][width]`]) ? 'required' : ''}
+                        defaultValue={freightPiece?.width}
                         placeholder="Ш"
                     />
                     <Input
                         type="number"
-                        name={`[places][${index}][height]`}
+                        name={`[freightPieces][${index}][height]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[places][${index}][height]`]) ? 'required' : ''}
-                        defaultValue={_place?.height}
+                        classNames={(state.form && errors[`[freightPieces][${index}][height]`]) ? 'required' : ''}
+                        defaultValue={freightPiece?.height}
                         placeholder="В"
                     />
                 </Field>
             </FieldSet>
             <Input
                 type="text"
-                name={`[places][${index}][description]`}
+                name={`[freightPieces][${index}][description]`}
                 inputRef={register()}
-                defaultValue={_place?.description}
+                defaultValue={freightPiece?.description}
                 placeholder="Описание груза"
             />
         </React.Fragment>
     )
 }
 
-export const Member: any = ({ member, register, errors, getValues, setValue }: any) => {
+export const Member: any = ({ member, register, errors, getValues }: any) => {
     const state: any = useSelector(state => state)
-    const _member = state?.form[member.value]
+    const dispatch = useDispatch()
 
-    const name: string = getValues(`[${member.value}][name]`)
+    const _member = state?.form[member.value]
+    const memberName: any = (_member?.id && _member?.fullName) ?
+        { value: _member.id, label: _member.fullName } : null
+
+    const options = useMemo(() =>
+        (state?.forwardingRequest[member.field] || []).map((city: SelectItemProps) => ({
+            label: city.text, value: city.value
+        }))
+    , [state, member])
 
     return (
         <FieldSet title={member.label + ' *'}>
             <Row stretch>
-                <AsyncSelect
+                <Select
+                    bigdata
                     cacheOptions
-                    defaultOptions={(state?.forwardingRequest[member.field] || []).map((city: SelectItemProps) => ({
-                        label: city.text, value: city.value
-                    }))}
-                    selected={(name) ? { value: name, label: name } : null}
-                    onChange={(e: any) => {
-                        setValue(`[${member.value}][name]`, e.value)
-                    }}
+                    value={memberName}
+                    defaultValue={memberName}
+                    isLoading={options.length === 0}
+                    isClearable={true}
+                    isSearchable={true}
+                    options={options}
                     placeholder="ФИО"
+                    onChange={(e: any) => dispatch(setForm({
+                        ...getValues(),
+                        [member.value]: {
+                            ...getValues(member.value),
+                            id: e.value, fullName: e.label
+                        }
+                    }))}
                 />
 
                 <Input
                     type="number"
-                    name={`[${member.value}][phone]`}
+                    name={`[${member.value}][phoneNumber]`}
                     inputRef={register({ required: true })}
-                    classNames={(errors[`[${member.value}][phone]`]) ? 'required' : ''}
-                    defaultValue={(_member) && _member?.phone}
+                    classNames={(errors[`[${member.value}][phoneNumber]`]) ? 'required' : ''}
+                    defaultValue={(_member) && _member?.phoneNumber}
                     placeholder="Телефон"
                 />
                 <Input

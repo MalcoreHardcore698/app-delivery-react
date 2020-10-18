@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import Form from './../ui/Form'
 import Input from './../ui/Input'
 import Button from './../ui/Button'
-import { login } from '../../redux/actions'
+import { login } from '../../redux/creators'
 
 export default () => {
     const dispatch = useDispatch()
@@ -17,10 +17,22 @@ export default () => {
             <div className="content">
                 <h1 className="title">Личный кабинет</h1>
                 <Form onSubmit={handleSubmit}>
-                    {({ register }: any) => (
+                    {({ register, errors }: any) => (
                         <React.Fragment>
-                            <Input inputRef={register()} name="tin" type="text" placeholder="TIN" />
-                            <Input inputRef={register()} name="password" type="password" placeholder="Password" />
+                            <Input
+                                classNames={(errors && errors.tin) ? 'required' : ''}
+                                inputRef={register({ required: true })}
+                                name="tin"
+                                type="text"
+                                placeholder="TIN"
+                            />
+                            <Input
+                                classNames={(errors && errors.password) ? 'required' : ''}
+                                inputRef={register({ required: true })}
+                                name="password"
+                                type="password"
+                                placeholder="Password"
+                            />
                             <Button type="submit" classNames="accent">Войти</Button>
                         </React.Fragment>
                     )}

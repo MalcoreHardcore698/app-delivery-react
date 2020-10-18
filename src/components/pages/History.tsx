@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import Table from '../ui/Table'
-import { forwardingNotes } from '../../redux/actions'
+import Loading from '../ui/Loading'
+import { forwardingNotes } from '../../redux/creators'
 
 export default () => {
     const state: any = useSelector(state => state)
@@ -44,7 +45,7 @@ export default () => {
     const columns: any = useMemo(
         () => [
             {
-                header: '№ Заказа',
+                Header: '№ Заказа',
                 accessor: 'number',
             },
             {
@@ -52,7 +53,7 @@ export default () => {
                 accessor: 'date',
             },
             {
-                header: (
+                Header: (
                     <React.Fragment>
                         <span>Откуда</span>
                         <span>Куда</span>
@@ -61,7 +62,7 @@ export default () => {
                 accessor: 'points',
             },
             {
-                header: (
+                Header: (
                     <React.Fragment>
                         <span>Отправитель</span>
                         <span>Получитель</span>
@@ -70,7 +71,7 @@ export default () => {
                 accessor: 'members',
             },
             {
-                header: (
+                Header: (
                     <React.Fragment>
                         <span>Вес</span>
                         <span>Объем</span>
@@ -79,7 +80,7 @@ export default () => {
                 accessor: 'specification',
             },
             {
-                header: 'Статус груза',
+                Header: 'Статус груза',
                 accessor: 'state',
             },
         ],
@@ -92,7 +93,7 @@ export default () => {
 
     return (    
         <div className="content">
-            <Table columns={columns} data={data} />
+            {(state.loading) ? <Loading /> : <Table columns={columns} data={data} />}
         </div>
     )
 }

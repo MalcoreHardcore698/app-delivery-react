@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { auth } from '../redux/actions'
+import { auth } from '../redux/creators'
 import Layout from './Layout'
 import '../assets/styles/App.css'
 

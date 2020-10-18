@@ -1,8 +1,6 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { RouteProps } from './../ui/Router'
 import Router from './../ui/Router'
-import Loading from './../ui/Loading'
 import {
     Introduction,
     Services,
@@ -12,7 +10,7 @@ import {
 
 const members: any = [
     { value: 'sender', label: 'Отправитель', field: 'senderItemsList' },
-    { value: 'reciever', label: 'Получатель', field: 'recipientItemsList' }
+    { value: 'recipient', label: 'Получатель', field: 'recipientItemsList' }
 ]
 
 const routes: Array<RouteProps> = [
@@ -38,15 +36,8 @@ const routes: Array<RouteProps> = [
     }
 ]
 
-export default () => {
-    const state: any = useSelector(state => state)
-
-    if (state.loading)
-        return <Loading />
-
-    return (
-        <div className="content">
-            <Router home="/" routes={routes} />
-        </div>
-    )
-}
+export default () => (
+    <div className="content">
+        <Router home="/" routes={routes} />
+    </div>
+)

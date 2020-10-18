@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Button from './Button'
-import { logout } from '../../redux/actions'
+import { logout } from '../../redux/creators'
 import Logotype from '../../assets/images/logo.png'
 
 export default ({ isAuthenticated }: any) => {
