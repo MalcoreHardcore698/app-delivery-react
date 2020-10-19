@@ -130,6 +130,10 @@ input.required {
   transition: var(--transition);
 }
 
+input, textarea, select {
+  flex-grow: 1;
+}
+
 .button,
 button {
   cursor: pointer;

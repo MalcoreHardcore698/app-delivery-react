@@ -147,9 +147,9 @@ export const Introduction: any = ({ jump, members }: any) => {
                                     <FieldSet title="Время">
                                         <Field label="с">
                                             <Input
-                                                type="datetime-local"
+                                                type="time"
                                                 name="timeFrom"
-                                                inputRef={register({ required: true })}
+                                                inputRef={register()}
                                                 classNames={(state.form && errors.forwardingDate) ? 'required' : ''}
                                                 placeholder="Начало"
                                             />
@@ -157,9 +157,9 @@ export const Introduction: any = ({ jump, members }: any) => {
 
                                         <Field label="до">
                                             <Input
-                                                type="datetime-local"
+                                                type="time"
                                                 name="timeTo"
-                                                inputRef={register({ required: true })}
+                                                inputRef={register()}
                                                 classNames={(state.form && errors.timeTo) ? 'required' : ''}
                                                 placeholder="Конец"
                                             />
@@ -204,29 +204,34 @@ export const Services: any = ({ back, jump }: any) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {({ register, control, setValue, getValues }: any) => (
+            {({ control, getValues }: any) => (
                 <React.Fragment>
                     <Button classNames="accent clear back" onClick={() => back()}>Назад</Button>
 
                     <Column>
                         <Subtitle text="Тип тарифа" />
                         <Controller
-                            as={Select}
+                            as={<Select
+                                options={(state?.forwardingRequest?.tariffTypes || []).map((city: SelectItemProps) => ({
+                                    label: city.text, value: city.value
+                                }))}
+                                placeholder="Тип тарифа"
+                                isSearchable
+                                isClearable
+                            />}
                             name="tariffType"
-                            options={(state?.forwardingRequest?.tariffTypes || [{ value: '1', text: '1' }]).map((city: SelectItemProps) => ({
-                                label: city.text, value: city.value
-                            }))}
-                            control={control}
                             rules={{ required: true }}
+                            control={control}
                             defaultValue={state.form?.tariffType || null}
-                            placeholder="Тип тарифа"
-                            isClearable
                         />
 
                         <Subtitle text="Плательщик" />
                         <Radiobox
                             name="payer"
-                            onChange={(e: any) => dispatch(setForm({ 'payer': e.value }))}
+                            onChange={(e: any) => dispatch(setForm({
+                                ...getValues(),
+                                payer: e.value
+                            }))}
                             list={[
                                 { value: 'sender', label: 'Отправитель' },
                                 { value: 'recipient', label: 'Получатель' },
@@ -291,23 +296,26 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                         <Definition text="Куда" detail={state?.form?.destinationCityId?.label} />
                     </DefinitionList>
 
+                    {(state?.form?.freightPieces.length > 0) &&
                     <DefinitionList>
-                        {(state?.form?.places || []).map((place: any, index: number) =>
-                            <Definition key={index} text="Параметры мест" detail={`${place?.weight} кг, ${place?.length}x${place?.width}x${place?.height} м`} />
+                        {state?.form?.freightPieces.map((freightPiece: any, index: number) =>
+                            <Definition key={index} text="Параметры мест" detail={`${freightPiece?.weight} кг, ${freightPiece?.length}x${freightPiece?.width}x${freightPiece?.height} м`} />
                         )}
-                    </DefinitionList>
+                    </DefinitionList>}
 
+                    {(state?.form?.forwardingDate) &&
                     <DefinitionList>
                         <Definition
                             text="Дата экспедирвоания"
-                            detail={new Date(state?.form?.timeTo).toLocaleString('ru-RU', {
+                            detail={new Date(state?.form?.forwardingDate).toLocaleString('ru-RU', {
                                 day: '2-digit',
                                 month: '2-digit',
                                 year: 'numeric'
                             })}
                         />
-                    </DefinitionList>
+                    </DefinitionList>}
                     
+                    {(state?.form?.timeFrom && state?.form?.timeTo) &&
                     <DefinitionList>
                         <Definition text="Время" detail={(
                             <React.Fragment>
@@ -323,13 +331,13 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                                 })}
                             </React.Fragment>
                         )} />
-                    </DefinitionList>
+                    </DefinitionList>}
                     
                     <DefinitionList>
                         <Definition text="Отправитель" detail={(
                             <React.Fragment>
                                 {[
-                                    state?.form?.sender?.fullName,
+                                    state?.form?.sender?.fullName.value,
                                     state?.form?.sender?.phoneNumber,
                                     state?.form?.sender?.street
                                 ]
@@ -344,7 +352,7 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                         <Definition text="Получатель" detail={(
                             <React.Fragment>
                                 {[
-                                    state?.form?.recipient?.fullName,
+                                    state?.form?.recipient?.fullName.value,
                                     state?.form?.recipient?.phoneNumber,
                                     state?.form?.recipient?.street
                                 ]
@@ -459,7 +467,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
     const _member = state?.form[member.value]
 
     const options = useMemo(() =>
-        ((state?.forwardingRequest && state.forwardingRequest[member.field]) || [{ value: '1', text: '1' }])
+        ((state?.forwardingRequest && state.forwardingRequest[member.field]) || [])
             .filter((f: SelectItemProps) => f && f?.text && f?.value)
             .map((city: SelectItemProps) => ({
                 label: city.text, value: city.value
@@ -472,7 +480,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
             <Row stretch>
                 <Controller
                     as={Select}
-                    name={`[${member.value}][name]`}
+                    name={`[${member.value}][fullName]`}
                     options={options}
                     control={control}
                     placeholder="ФИО"
@@ -486,7 +494,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
                 <Input
                     type="number"
                     name={`[${member.value}][phoneNumber]`}
-                    inputRef={register({ required: true })}
+                    inputRef={register()}
                     classNames={(errors[`[${member.value}][phoneNumber]`]) ? 'required' : ''}
                     defaultValue={(_member) && _member?.phoneNumber}
                     placeholder="Телефон"
@@ -494,7 +502,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
                 <Input
                     type="number"
                     name={`[${member.value}][prefix]`}
-                    inputRef={register({ required: true })}
+                    inputRef={register()}
                     classNames={(errors[`[${member.value}][prefix]`]) ? 'required' : ''}
                     defaultValue={(_member) && _member?.prefix}
                     placeholder="Доб."
@@ -505,7 +513,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
                 <Input
                     type="text"
                     name={`[${member.value}][company]`}
-                    inputRef={register({ required: true })}
+                    inputRef={register()}
                     classNames={(errors[`[${member.value}][company]`]) ? 'required' : ''}
                     defaultValue={(_member) && _member?.company}
                     placeholder="Компания"
@@ -516,7 +524,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
                 <Input
                     type="text"
                     name={`[${member.value}][street]`}
-                    inputRef={register({ required: true })}
+                    inputRef={register()}
                     classNames={(errors[`[${member.value}][street]`]) ? 'required' : ''}
                     defaultValue={(_member) && _member?.street}
                     placeholder="Улица"
@@ -524,7 +532,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
                 <Input
                     type="text"
                     name={`[${member.value}][house]`}
-                    inputRef={register({ required: true })}
+                    inputRef={register()}
                     classNames={(errors[`[${member.value}][house]`]) ? 'required' : ''}
                     defaultValue={(_member) && _member?.house}
                     placeholder="Дом"
@@ -532,7 +540,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
                 <Input
                     type="text"
                     name={`[${member.value}][apart]`}
-                    inputRef={register({ required: true })}
+                    inputRef={register()}
                     classNames={(errors[`[${member.value}][apart]`]) ? 'required' : ''}
                     defaultValue={(_member) && _member?.apart}
                     placeholder="Квартира/офис"
