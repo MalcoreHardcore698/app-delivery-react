@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Controller } from 'react-hook-form'
-import DatePicker, { registerLocale } from 'react-datepicker'
 import Select from 'react-select'
 import Form from './../ui/Form'
 import Row from './../ui/Row'
@@ -12,6 +11,7 @@ import FieldSet from './../ui/FieldSet'
 import Input from './../ui/Input'
 import TextArea from './../ui/TextArea'
 import Checkbox from './../ui/Checkbox'
+import Radiobox from './../ui/Radiobox'
 import Button from './../ui/Button'
 import DefinitionList from './../ui/DefinitionList'
 import Definition from './../ui/Definition'
@@ -21,9 +21,6 @@ import {
     forwardingRequestSaveTemplate
 } from '../../redux/creators'
 import Loading from '../ui/Loading'
-import ru from 'date-fns/locale/ru'
-
-registerLocale('ru', ru)
 
 interface SelectItemProps {
     disabled: boolean,
@@ -36,10 +33,13 @@ interface SelectItemProps {
 const GeneralFields = ({ register, errors, control }: any) => {
     const state: any = useSelector(state => state)
 
-    const list = state?.forwardingRequest?.cityItemsList || []
-    const options = useMemo(() => list.map((city: SelectItemProps) => ({
-        label: city.text, value: city.value
-    })), [list])
+    const list = state?.forwardingRequest?.cityItemsList || [{ value: '1', text: '1' }]
+    const options = useMemo(() => list
+        .filter((f: SelectItemProps) => f && f?.text && f?.value)
+        .map((city: SelectItemProps) => ({
+            label: city.text, value: city.value
+        }))
+    , [list])
     
     return (
         <React.Fragment>
@@ -54,10 +54,10 @@ const GeneralFields = ({ register, errors, control }: any) => {
                             isSearchable
                             isClearable
                         />}
-                        name="departureCity"
+                        name="departureCityId"
                         rules={{ required: true }}
                         control={control}
-                        defaultValue={state.form?.departureCity || null}
+                        defaultValue={state.form?.departureCityId || null}
                     />
                 </Column>
                 <Column>
@@ -70,10 +70,10 @@ const GeneralFields = ({ register, errors, control }: any) => {
                             isSearchable
                             isClearable
                         />}
-                        name="destinationCity"
+                        name="destinationCityId"
                         rules={{ required: true }}
                         control={control}
-                        defaultValue={state.form?.destinationCity || null}
+                        defaultValue={state.form?.destinationCityId || null}
                     />
                 </Column>
             </Row>
@@ -133,16 +133,12 @@ export const Introduction: any = ({ jump, members }: any) => {
                                 <Column>
                                     <Subtitle text="Дата экспедирования *" />
                                     <Field>
-                                        <DatePicker
+                                        <Input
+                                            type="date"
                                             name="forwardingDate"
-                                            ref={register({ required: true })}
-                                            selected={state.form?.forwardingDate}
-                                            onChange={(selected: any) => {
-                                                dispatch(setForm({ ...getValues(), forwardingDate: selected }))
-                                            }}
-                                            dateFormat="dd.MM.yyyy"
-                                            placeholderText="Дата экспедирования"
-                                            locale="ru"
+                                            inputRef={register({ required: true })}
+                                            classNames={(state.form && errors.forwardingDate) ? 'required' : ''}
+                                            placeholder="Дата экспедирования"
                                         />
                                     </Field>
                                 </Column>
@@ -150,36 +146,22 @@ export const Introduction: any = ({ jump, members }: any) => {
                                 <Column>
                                     <FieldSet title="Время">
                                         <Field label="с">
-                                            <DatePicker
+                                            <Input
+                                                type="datetime-local"
                                                 name="timeFrom"
-                                                ref={register()}
-                                                selected={state.form?.timeFrom}
-                                                onChange={(selected: any) => {
-                                                    dispatch(setForm({ ...getValues(), timeFrom: selected }))
-                                                }}
-                                                showTimeSelect
-                                                showTimeSelectOnly
-                                                timeIntervals={15}
-                                                dateFormat="h:mm aa"
-                                                placeholderText="Начало"
-                                                locale="ru"
+                                                inputRef={register({ required: true })}
+                                                classNames={(state.form && errors.forwardingDate) ? 'required' : ''}
+                                                placeholder="Начало"
                                             />
                                         </Field>
 
                                         <Field label="до">
-                                            <DatePicker
+                                            <Input
+                                                type="datetime-local"
                                                 name="timeTo"
-                                                ref={register()}
-                                                selected={state.form?.timeTo}
-                                                onChange={(selected: any) => {
-                                                    dispatch(setForm({ ...getValues(), timeTo: selected }))
-                                                }}
-                                                showTimeSelect
-                                                showTimeSelectOnly
-                                                timeIntervals={15}
-                                                dateFormat="h:mm aa"
-                                                placeholderText="Конец"
-                                                locale="ru"
+                                                inputRef={register({ required: true })}
+                                                classNames={(state.form && errors.timeTo) ? 'required' : ''}
+                                                placeholder="Конец"
                                             />
                                         </Field>
                                     </FieldSet>
@@ -214,10 +196,7 @@ export const Services: any = ({ back, jump }: any) => {
     const handleSubmit: any = (form: any) => {
         dispatch(setForm({
             id: state?.history?.length + 1,
-            tariffType: form?.tariffType,
-            services: form?.services
-                ? JSON.parse(form.services)
-                : [],
+            tariffType: form?.tariffType
         }))
 
         jump('/preview')
@@ -225,16 +204,16 @@ export const Services: any = ({ back, jump }: any) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {({ register, setValue, control }: any) => (
+            {({ register, control, setValue, getValues }: any) => (
                 <React.Fragment>
                     <Button classNames="accent clear back" onClick={() => back()}>Назад</Button>
 
                     <Column>
-                        <Subtitle text="Дополнительные услуги" />
+                        <Subtitle text="Тип тарифа" />
                         <Controller
                             as={Select}
                             name="tariffType"
-                            options={(state?.forwardingRequest?.tariffTypes || []).map((city: SelectItemProps) => ({
+                            options={(state?.forwardingRequest?.tariffTypes || [{ value: '1', text: '1' }]).map((city: SelectItemProps) => ({
                                 label: city.text, value: city.value
                             }))}
                             control={control}
@@ -244,47 +223,32 @@ export const Services: any = ({ back, jump }: any) => {
                             isClearable
                         />
 
-                        <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('isCreateRequired', JSON.stringify(value))}
-                            list={[{ value: 'true', label: 'Обрешетка' }]}
+                        <Subtitle text="Плательщик" />
+                        <Radiobox
+                            name="payer"
+                            onChange={(e: any) => dispatch(setForm({ 'payer': e.value }))}
+                            list={[
+                                { value: 'sender', label: 'Отправитель' },
+                                { value: 'recipient', label: 'Получатель' },
+                                { value: 'another', label: 'Третье лицо' }
+                            ]}
                         />
+
+                        <Subtitle text="Дополнительные услуги" />
                         <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('isCreateNew', JSON.stringify(value))}
-                            list={[{ value: 'true', label: 'Доупаковка' }]}
-                        />
-                        <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('isDeliveryRequired', JSON.stringify(value))}
-                            list={[{ value: 'true', label: 'Грузчики' }]}
-                        />
-                        <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('isIncludeVAT', JSON.stringify(value))}
-                            list={[{ value: 'true', label: 'Учитывать НДС' }]}
-                        />
-                        <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('isSameDayForwarding', JSON.stringify(value))}
-                            list={[{ value: 'true', label: 'Отправка день в день' }]}
-                        />
-                        <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('isSumIncludesVAT', JSON.stringify(value))}
-                            list={[{ value: 'true', label: 'Сумма Включает НДС' }]}
-                        />
-                        <Checkbox
-                            name="services"
-                            inputRef={register()}
-                            onChange={(value: any) => setValue('isUrgentRequest', JSON.stringify(value))}
-                            list={[{ value: 'true', label: 'Срочная заявка' }]}
+                            onChange={(e: any) => dispatch(setForm({
+                                ...getValues(),
+                                [e]: (state.form[e]) ? !state.form[e] : true
+                            }))}
+                            list={[
+                                { value: 'isCreateRequired', label: 'Обрешетка' },
+                                { value: 'isCreateNew', label: 'Доупаковка' },
+                                { value: 'isDeliveryRequired', label: 'Грузчики' },
+                                { value: 'isIncludeVAT', label: 'Учитывать НДС' },
+                                { value: 'isSameDayForwarding', label: 'Отправка день в день' },
+                                { value: 'isSumIncludesVAT', label: 'Сумма Включает НДС' },
+                                { value: 'isUrgentRequest', label: 'Срочная заявка' }
+                            ]}
                         />
                     </Column>
 
@@ -320,11 +284,11 @@ export const Preview: any = ({ back, jump, text="Отправить заказ" 
                     ))}
 
                     <DefinitionList>
-                        <Definition text="Откуда" detail={state?.form?.departureCity?.label} />
+                        <Definition text="Откуда" detail={state?.form?.departureCityId?.label} />
                     </DefinitionList>
 
                     <DefinitionList>
-                        <Definition text="Куда" detail={state?.form?.destinationCity?.label} />
+                        <Definition text="Куда" detail={state?.form?.destinationCityId?.label} />
                     </DefinitionList>
 
                     <DefinitionList>
@@ -495,7 +459,8 @@ export const Member: any = ({ member, register, errors, control }: any) => {
     const _member = state?.form[member.value]
 
     const options = useMemo(() =>
-        ((state?.forwardingRequest && state.forwardingRequest[member.field]) || [])
+        ((state?.forwardingRequest && state.forwardingRequest[member.field]) || [{ value: '1', text: '1' }])
+            .filter((f: SelectItemProps) => f && f?.text && f?.value)
             .map((city: SelectItemProps) => ({
                 label: city.text, value: city.value
             })
@@ -507,7 +472,7 @@ export const Member: any = ({ member, register, errors, control }: any) => {
             <Row stretch>
                 <Controller
                     as={Select}
-                    name="fullName"
+                    name={`[${member.value}][name]`}
                     options={options}
                     control={control}
                     placeholder="ФИО"

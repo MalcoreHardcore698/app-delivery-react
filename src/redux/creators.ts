@@ -76,13 +76,46 @@ export const forwardingRequest = () => {
 }
 
 export const forwardingRequestCreate = (form: any) => {
-    const document: any = form
+    const document: any = {
+        ...form,
+        departureCityId: form.departureCityId.value,
+        destinationCityId: form.destinationCityId.value,
+        sender: {
+            ...form.sender,
+            name: form.sender.name.value
+        },
+        recipient: {
+            ...form.recipient,
+            name: form.recipient.name.value
+        },
+        tariffType: form.tariffType.value
+    }
+
+    const formData = new FormData()
+    formData.append('payer', form.payer)
+    formData.append('departureCityId', form.departureCityId.value)
+    formData.append('destinationCityId', form.destinationCityId.value)
+    formData.append('senderId', form.sender.name)
+    formData.append('recipientId', form.recipient.name)
+    formData.append('tariffType', form.tariffType)
+    formData.append('timeFrom', form.timeFrom)
+    formData.append('timeTo', form.timeTo)
+    formData.append('isCreateRequired', form.isCreateRequired)
+    formData.append('isCreateNew', form.isCreateNew)
+    formData.append('isDeliveryRequired', form.isDeliveryRequired)
+    formData.append('isIncludeVAT', form.isIncludeVAT)
+    formData.append('isSameDayForwarding', form.isSameDayForwarding)
+    formData.append('isSumIncludesVAT', form.isSumIncludesVAT)
+    formData.append('isUrgentRequest', form.isUrgentRequest)
 
     return async (dispatch: any) => {
         dispatch(setLoading(true))
 
-        await fetch(`${apiHost}/forwardingrequest/create`, {
+        await fetch(`${apiHost}/forwardingrequest/create?forwardingRequestModel1=${JSON.stringify(document)}`, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(document)
         })
             .then((res) => res.json())

@@ -24,14 +24,14 @@ export default () => {
                                 inputRef={register({ required: true })}
                                 name="tin"
                                 type="text"
-                                placeholder="TIN"
+                                placeholder="Логин"
                             />
                             <Input
                                 classNames={(errors && errors.password) ? 'required' : ''}
                                 inputRef={register({ required: true })}
                                 name="password"
                                 type="password"
-                                placeholder="Password"
+                                placeholder="Пароль"
                             />
                             <Button type="submit" classNames="accent">Войти</Button>
                         </React.Fragment>
