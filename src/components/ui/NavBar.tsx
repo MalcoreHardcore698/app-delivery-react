@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 import Button from './Button'
 import { forwardingRequest } from '../../redux/creators'
+import { clearForm } from '../../redux/actions'
 
 const props = {
     className: 'button',
@@ -20,7 +21,10 @@ export default () => {
         const isActive = e.target.classList.contains('active')
 
         if (isLoading && isActive) e.preventDefault()
-        else dispatch(forwardingRequest())
+        else {
+            dispatch(forwardingRequest())
+            dispatch(clearForm())
+        }
     }
 
     const links = [
@@ -32,8 +36,8 @@ export default () => {
 
     return (
         <div className="navbar">
-            {links.map((link: any) => (
-                <Button component={() => (
+            {links.map((link: any, index: number) => (
+                <Button key={index} component={() => (
                     <NavLink
                         exact {...props}
                         to={link.path}
