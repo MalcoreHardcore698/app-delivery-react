@@ -152,7 +152,7 @@ export const Introduction: any = ({ jump, members }: any) => {
                                         <Field label="с">
                                             <DatePicker
                                                 name="timeFrom"
-                                                ref={register({ required: true })}
+                                                ref={register()}
                                                 selected={state.form?.timeFrom}
                                                 onChange={(selected: any) => {
                                                     dispatch(setForm({ ...getValues(), timeFrom: selected }))
@@ -169,7 +169,7 @@ export const Introduction: any = ({ jump, members }: any) => {
                                         <Field label="до">
                                             <DatePicker
                                                 name="timeTo"
-                                                ref={register({ required: true })}
+                                                ref={register()}
                                                 selected={state.form?.timeTo}
                                                 onChange={(selected: any) => {
                                                     dispatch(setForm({ ...getValues(), timeTo: selected }))
