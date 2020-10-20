@@ -1,9 +1,10 @@
 import React from 'react'
 
 interface InputProps {
-    inputRef?: any,
     name?: string,
     type?: string,
+    inputRef?: any,
+    disabled?: boolean,
     classNames?: string,
     placeholder?: string,
     defaultValue?: string,
@@ -14,6 +15,7 @@ export default ({
     name,
     type,
     inputRef,
+    disabled,
     classNames,
     placeholder,
     defaultValue,
@@ -23,6 +25,7 @@ export default ({
         <input
             name={name}
             ref={inputRef}
+            disabled={disabled}
             type={type ?? 'text'}
             className={`${(hidden) ? 'hidden ' : ''}${classNames}`}
             defaultValue={defaultValue}

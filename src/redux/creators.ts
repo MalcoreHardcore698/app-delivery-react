@@ -2,12 +2,13 @@ import {
     loginSuccess,
     logoutSuccess,
     requestError,
-    addToHistory,
     saveTemplate,
     setForwardingRequest,
     setTemplates,
     setLoading,
     setNotes,
+    setForm,
+    clearForm,
     deleteTemplate
 } from './actions'
 import { apiHost } from '../utils/config'
@@ -62,13 +63,53 @@ export const logout = () => {
 // END AUTH
 
 // BEGIN FORWARDING REQUEST
-export const forwardingRequest = () => {
+export const forwardingRequest = (id?: number) => {
     return async (dispatch: any) => {
         dispatch(setLoading(true))
 
-        await fetch(`${apiHost}/forwardingrequest/create`)
+        await fetch(`${apiHost}/forwardingrequest/create?templateId=${id}`)
             .then((res) => res.json())
-            .then((data) => dispatch(setForwardingRequest(data)))
+            .then((data) => {
+                if (id) {
+                    const departureCityId = {
+                        value: data.departureCityId,
+                        label: data.departureCityItemsList.find(
+                            (city: any) => ((+city.value) === data.departureCityId)
+                        )?.text
+                    }
+                    const destinationCityId = {
+                        value: data.destinationCityId,
+                        label: data.destinationCityItemsList.find(
+                            (city: any) => ((+city.value) === data.destinationCityId)
+                        )?.text
+                    }
+
+                    dispatch(forwardingMemberInfo(data.senderId, 'sender'))
+                    dispatch(forwardingMemberInfo(data.recipientId, 'recipient'))
+
+                    dispatch(setForm({
+                        departureCityId, destinationCityId,
+                        forwardingDate: new Date(data.forwardingDate).toLocaleString('ru-RU', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        }),
+                        timeFrom: new Date(data.timeFrom).toLocaleString('ru-RU', { hour: '2-digit', minute: '2-digit'}),
+                        timeTo: new Date(data.timeTo).toLocaleString('ru-RU', { hour: '2-digit', minute: '2-digit'}),
+                        tariffType: data.tariffType,
+                        isCrateRequired: data.isCrateRequired,
+                        isCreateNew: data.isCreateNew,
+                        isDeliveryRequired: data.isDeliveryRequired,
+                        isIncludeVAT: data.isIncludeVAT,
+                        isSameDayForwarding: data.isSameDayForwarding,
+                        isSumIncludesVAT: data.isSumIncludesVAT,
+                        isUrgentRequest: data.isUrgentRequest
+                    }))
+                } else {
+                    dispatch(setForwardingRequest(data))
+                }
+            
+            })
             .catch(() => dispatch(requestError()))
 
         dispatch(setLoading(false))
@@ -80,8 +121,8 @@ export const forwardingRequestCreate = (form: any) => {
         departureCityId: form.departureCityId.value,
         destinationCityId: form.destinationCityId.value,
 
-        senderId: form.sender.fullName.value,
-        recipientId: form.recipient.fullName.value,
+        senderId: form.sender.id,
+        recipientId: form.recipient.id,
         tariffType: form.tariffType.value,
         freightPieces: form.freightPieces,
 
@@ -109,7 +150,7 @@ export const forwardingRequestCreate = (form: any) => {
             body: JSON.stringify(document)
         })
             .then((res) => res.json())
-            .then((data) => dispatch(addToHistory(data)))
+            .then((data) => dispatch(setForm({ id: data.id })))
             .catch(() => dispatch(requestError()))
 
         dispatch(setLoading(false))
@@ -129,29 +170,30 @@ export const forwardingRequestTemplates = () => {
     }
 }
 
-export const forwardingRequestSaveTemplate = (template: any) => {
+export const forwardingRequestSaveTemplate = (id: any, name: string) => {
     return async (dispatch: any) => {
         dispatch(setLoading(true))
 
-        await fetch(`${apiHost}/forwardingrequest/saveastemplate`, {
+        await fetch(`${apiHost}/forwardingrequest/saveastemplate?id=${id}&name=${name}`, {
             method: 'POST',
-            body: JSON.stringify(template)
+            body: JSON.stringify({ id, name })
         })
             .then((res) => res.json())
             .then((data) => dispatch(saveTemplate(data)))
             .catch(() => dispatch(requestError()))
 
+        dispatch(clearForm())
         dispatch(setLoading(false))
     }
 }
 
-export const forwardingRequestDeleteTemplate = (template: any) => {
+export const forwardingRequestDeleteTemplate = (id: any) => {
     return async (dispatch: any) => {
         dispatch(setLoading(true))
 
-        await fetch(`${apiHost}/forwardingrequest/deletetemplateconfirmed`, {
+        await fetch(`${apiHost}/forwardingrequest/deleteTemplate?id=${id}`, {
             method: 'POST',
-            body: JSON.stringify(template)
+            body: JSON.stringify(id)
         })
             .then((res) => res.json())
             .then((data) => dispatch(deleteTemplate(data)))
@@ -163,11 +205,11 @@ export const forwardingRequestDeleteTemplate = (template: any) => {
 // END FORWARDING REQUEST
 
 // BEGIN FORWARDING NOTE
-export const forwardingNotes = () => {
+export const forwardingNotes = (page: number) => {
     return async (dispatch: any) => {
         dispatch(setLoading(true))
 
-        await fetch(`${apiHost}/forwardingnote`)
+        await fetch(`${apiHost}/forwardingnote?page=${page}`)
             .then((res) => res.json())
             .then((data) => dispatch(setNotes(data)))
             .catch(() => dispatch(requestError()))
@@ -176,3 +218,14 @@ export const forwardingNotes = () => {
     }
 }
 // END FORWARDING NOTE
+
+// BEGIN FORWARDING MEMBER
+export const forwardingMemberInfo = (id: any, member: string) => {
+    return async (dispatch: any) => {
+        await fetch(`${apiHost}/home/forwardingMemberInfo?id=${id}`)
+            .then((res) => res.json())
+            .then((data) => dispatch(setForm({ [member]: data })))
+            .catch(() => dispatch(requestError()))
+    }
+}
+// END FORWARDING MEMBER

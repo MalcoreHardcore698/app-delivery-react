@@ -13,8 +13,8 @@ export default () => {
     const state: any = useSelector(state => state)
     const dispatch = useDispatch()
 
-    const handleDeleteTemplate = (template: any) => {
-        dispatch(forwardingRequestDeleteTemplate(template))
+    const handleDeleteTemplate = (id: any) => {
+        dispatch(forwardingRequestDeleteTemplate(id))
     }
 
     useEffect(() => {
@@ -28,8 +28,8 @@ export default () => {
                 <ul className="templates">
                     {state.templates.map((template: any) =>
                         <li className="template" key={template.id}>
-                            <p className="name">{template.cityFrom}-{template.cityTo}</p>
-                            <Button classNames="icon" onClick={() => handleDeleteTemplate(template)}>
+                            <p className="name">{template.name}</p>
+                            <Button classNames="icon" onClick={() => handleDeleteTemplate(template.id)}>
                                 <FontAwesomeIcon icon={faTrash} />
                             </Button>
                         </li>    

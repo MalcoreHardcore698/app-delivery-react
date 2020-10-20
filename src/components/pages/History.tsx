@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+// import useInfiniteScroll from 'react-infinite-scroll-hook'
 import Table from '../ui/Table'
 import Loading from '../ui/Loading'
 import { forwardingNotes } from '../../redux/creators'
@@ -7,6 +8,9 @@ import { forwardingNotes } from '../../redux/creators'
 export default () => {
     const state: any = useSelector(state => state)
     const dispatch = useDispatch()
+
+    // eslint-disable-next-line
+    const [page, setPage] = useState(1)
 
     const data: any = useMemo(
         () => {
@@ -49,7 +53,7 @@ export default () => {
                 accessor: 'number',
             },
             {
-                header: 'Дата заказа',
+                Header: 'Дата заказа',
                 accessor: 'date',
             },
             {
@@ -88,8 +92,8 @@ export default () => {
     )
 
     useEffect(() => {
-        dispatch(forwardingNotes())
-    }, [dispatch])
+        dispatch(forwardingNotes(page))
+    }, [dispatch, page])
 
     return (    
         <div className="content">

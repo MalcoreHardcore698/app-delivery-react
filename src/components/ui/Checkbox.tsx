@@ -1,5 +1,4 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 
@@ -10,32 +9,32 @@ interface CheckmarkProps {
 
 interface CheckboxItemProps {
     item: CheckmarkProps,
-    onChange: any
+    source?: any,
+    onChange?: any
 }
 
 interface CheckboxProps {
     list: Array<CheckmarkProps>,
+    source?: any,
     onChange?: any
 }
 
-const Checkbox = ({ item, onChange }: CheckboxItemProps) => {
-    const state: any = useSelector(state => state)
-
+const Checkbox = ({ item, source, onChange }: CheckboxItemProps) => {
     return (
-        <div className={`checkbox${(state.form[item.value]) ? ' checked' : ''}`} onClick={() => onChange(item.value)}>
+        <div className={`checkbox${(source[item.value]) ? ' checked' : ''}`} onClick={() => onChange(item.value)}>
             <div className="checkmark">
-                {(state.form[item.value]) && <FontAwesomeIcon icon={faCheck} />}
+                {(source[item.value]) && <FontAwesomeIcon icon={faCheck} />}
             </div>
             <label>{item.label}</label>
         </div>
     )
 }
 
-export default ({ list, onChange }: CheckboxProps) => {
+export default ({ list, source, onChange }: CheckboxProps) => {
     return (
         <div className="group-checkbox">
             {list.map((item: CheckmarkProps, index: number) =>
-                <Checkbox key={index} item={item} onChange={onChange} />    
+                <Checkbox key={index} item={item} source={source} onChange={onChange} />    
             )}
         </div>
     )

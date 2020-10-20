@@ -29,7 +29,10 @@ function formReducer(state: object={}, action: any) {
 function historyReducer(state: any=[], action: any) {
   switch (action.type) {
     case C.SET_NOTES:
-      return action.payload
+      return [
+        ...state,
+        ...action.payload
+      ]
     case C.ADD_TO_HISTORY:
       return [
         ...state,
