@@ -33,13 +33,21 @@ interface SelectItemProps {
 const GeneralFields = ({ register, errors, control }: any) => {
     const state: any = useSelector(state => state)
 
-    const list = state?.forwardingRequest?.cityItemsList || [{ value: '1', text: '1' }]
-    const options = useMemo(() => list
+    const departureCityItemsList = state?.forwardingRequest?.departureCityItemsList || []
+    const departureCityOptions = useMemo(() => departureCityItemsList
         .filter((f: SelectItemProps) => f && f?.text && f?.value)
         .map((city: SelectItemProps) => ({
             label: city.text, value: city.value
         }))
-    , [list])
+    , [departureCityItemsList])
+
+    const destinationCityItemsList = state?.forwardingRequest?.destinationCityItemsList || []
+    const destinationCityOptions = useMemo(() => destinationCityItemsList
+        .filter((f: SelectItemProps) => f && f?.text && f?.value)
+        .map((city: SelectItemProps) => ({
+            label: city.text, value: city.value
+        }))
+    , [destinationCityItemsList])
     
     return (
         <React.Fragment>
@@ -49,7 +57,7 @@ const GeneralFields = ({ register, errors, control }: any) => {
 
                     <Controller
                         as={<Select
-                            options={options}
+                            options={departureCityOptions}
                             placeholder="Откуда"
                             isSearchable
                             isClearable
@@ -65,7 +73,7 @@ const GeneralFields = ({ register, errors, control }: any) => {
 
                     <Controller
                         as={<Select
-                            options={options}
+                            options={destinationCityOptions}
                             placeholder="Куда"
                             isSearchable
                             isClearable
