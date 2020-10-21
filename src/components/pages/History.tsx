@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-// import useInfiniteScroll from 'react-infinite-scroll-hook'
 import Table from '../ui/Table'
 import Loading from '../ui/Loading'
 import { forwardingNotes } from '../../redux/creators'
@@ -9,8 +8,8 @@ export default () => {
     const state: any = useSelector(state => state)
     const dispatch = useDispatch()
 
-    // eslint-disable-next-line
     const [page, setPage] = useState(1)
+    const [isFetching, setIsFetching] = useState(false);
 
     const data: any = useMemo(
         () => {
@@ -91,6 +90,29 @@ export default () => {
         []
     )
 
+    const handleScroll = useCallback(() => {
+        const total = window.innerHeight + document.documentElement.scrollTop
+        const offset = document.documentElement.offsetHeight
+
+        if ((total !== offset) || isFetching) return
+
+        setIsFetching(true)
+    }, [isFetching])
+
+    // Listening scroll event
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [handleScroll])
+
+    // Setting new page
+    useEffect(() => {
+        if (!isFetching) return
+        setIsFetching(false)
+        setPage((prev: number) => prev + 1)
+    }, [isFetching, dispatch, page])
+
+    // Fetching notes
     useEffect(() => {
         dispatch(forwardingNotes(page))
     }, [dispatch, page])
