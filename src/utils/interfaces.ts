@@ -10,3 +10,11 @@ export interface AuthProps {
     sessionID: string | null,
     isAuthenticated: boolean
 }
+
+export interface SelectProps {
+    disabled: boolean,
+    group: string,
+    selected: boolean,
+    text: string,
+    value: string
+}

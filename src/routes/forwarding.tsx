@@ -1,28 +1,25 @@
 import React from 'react'
-import { RouteProps } from './../ui/Router'
-import Router from './../ui/Router'
-import {
-    Introduction,
-    Services,
-    Preview,
-    Conclusion
-} from '../content/Document'
+import Formation from '../components/ways/Formation'
+import Addition from '../components/ways/Addition'
+import Preview from '../components/ways/Preview'
+import Conclusion from '../components/ways/Conclusion'
+import { Member } from '../components/ui/Member'
 
-const members: any = [
+const members: Member[] = [
     { value: 'sender', label: 'Отправитель', field: 'senderItemsList' },
     { value: 'recipient', label: 'Получатель', field: 'recipientItemsList' }
 ]
 
-const routes: Array<RouteProps> = [
+export default [
     {
         path: '/',
         component: ({ jump, back }: any) =>
-            <Introduction jump={jump} back={back} members={members} />
+            <Formation jump={jump} back={back} members={members} />
     },
     {
-        path: '/services',
+        path: '/addition',
         component: ({ jump, back }: any) =>
-            <Services jump={jump} back={back} />
+            <Addition jump={jump} back={back} />
     },
     {
         path: '/preview',
@@ -30,14 +27,8 @@ const routes: Array<RouteProps> = [
             <Preview jump={jump} back={back} />
     },
     {
-        path: '/done',
+        path: '/conclusion',
         component: ({ jump, back }: any) =>
             <Conclusion jump={jump} back={back} />
     }
 ]
-
-export default () => (
-    <div className="content">
-        <Router home="/" routes={routes} />
-    </div>
-)

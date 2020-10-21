@@ -30,6 +30,7 @@ export default ({
             className={`${(hidden) ? 'hidden ' : ''}${classNames}`}
             defaultValue={defaultValue}
             placeholder={placeholder ?? 'Введите'}
+            autoComplete="off"
         />
     )
 }

@@ -4,10 +4,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import Button from '../ui/Button'
 import Loading from '../ui/Loading'
 import { useSelector, useDispatch } from 'react-redux'
-import {
-    forwardingRequestTemplates,
-    forwardingRequestDeleteTemplate
-} from '../../redux/creators'
+import { forwardingRequestTemplates, forwardingRequestDeleteTemplate } from '../../redux/creators'
 
 export default () => {
     const state: any = useSelector(state => state)

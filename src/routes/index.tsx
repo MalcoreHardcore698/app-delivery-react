@@ -1,9 +1,9 @@
 import React from 'react'
-import Main from './components/Main'
+import Main from '../components/Main'
 
-const History = React.lazy(() => import('./components/pages/History'))
-const Offer = React.lazy(() => import('./components/pages/Offer'))
-const Templates = React.lazy(() => import('./components/pages/Templates'))
+const History = React.lazy(() => import('../components/pages/History'))
+const Forwarding = React.lazy(() => import('../components/pages/Forwarding'))
+const Templates = React.lazy(() => import('../components/pages/Templates'))
 
 export default [
     {
@@ -17,10 +17,10 @@ export default [
     },
     {
         exact: true,
-        path: '/offer',
+        path: '/forwarding',
         component: () => (
             <Main>
-                <Offer />
+                <Forwarding />
             </Main>
         )
     },
@@ -29,7 +29,7 @@ export default [
         path: '/reservation',
         component: () => (
             <Main>
-                <Offer />
+                <Forwarding />
             </Main>
         )
     },

@@ -3,6 +3,6 @@ export default {
   form: null,
   history: [],
   templates: [],
-  forwardingRequest: null,
-  loading: false
+  loading: false,
+  forwardingRequest: null
 }

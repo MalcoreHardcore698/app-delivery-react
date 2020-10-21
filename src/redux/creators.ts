@@ -2,14 +2,12 @@ import {
     loginSuccess,
     logoutSuccess,
     requestError,
-    saveTemplate,
     setForwardingRequest,
     setTemplates,
     setLoading,
     setNotes,
     setForm,
-    clearForm,
-    deleteTemplate
+    clearForm
 } from './actions'
 import { apiHost } from '../utils/config'
 
@@ -177,10 +175,7 @@ export const forwardingRequestSaveTemplate = (id: any, name: string) => {
         await fetch(`${apiHost}/forwardingrequest/saveastemplate?id=${id}&name=${name}`, {
             method: 'POST',
             body: JSON.stringify({ id, name })
-        })
-            .then((res) => res.json())
-            .then((data) => dispatch(saveTemplate(data)))
-            .catch(() => dispatch(requestError()))
+        }).catch(() => dispatch(requestError()))
 
         dispatch(clearForm())
         dispatch(setLoading(false))
@@ -194,10 +189,7 @@ export const forwardingRequestDeleteTemplate = (id: any) => {
         await fetch(`${apiHost}/forwardingrequest/deleteTemplate?id=${id}`, {
             method: 'POST',
             body: JSON.stringify(id)
-        })
-            .then((res) => res.json())
-            .then((data) => dispatch(deleteTemplate(data)))
-            .catch(() => dispatch(requestError()))
+        }).catch(() => dispatch(requestError()))
 
         dispatch(setLoading(false))
     }
