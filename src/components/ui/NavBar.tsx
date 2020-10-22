@@ -28,7 +28,7 @@ export default () => {
     }
 
     const links = [
-        { text: 'Новый заказ', path: '/offer', onClick: handleForwardingRequest, className: classes },
+        { text: 'Новый заказ', path: '/forwarding', onClick: handleForwardingRequest, className: classes },
         { text: 'Новая бронь', path: '/reservation', onClick: handleForwardingRequest, className: classes },
         { text: 'История заказов', path: '/', onClick: () => {}, className: classes },
         { text: 'Шаблоны', path: '/templates', onClick: () => {}, className: classes }

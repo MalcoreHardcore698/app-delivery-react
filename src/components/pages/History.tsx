@@ -119,7 +119,8 @@ export default () => {
 
     return (    
         <div className="content">
-            {(state.loading) ? <Loading /> : <Table columns={columns} data={data} />}
+            <Table columns={columns} data={data} />
+            {(state.loading) && <Loading />}
         </div>
     )
 }

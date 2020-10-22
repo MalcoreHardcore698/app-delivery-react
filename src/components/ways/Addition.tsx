@@ -10,6 +10,7 @@ import Checkbox from './../ui/Checkbox'
 import Radiobox from './../ui/Radiobox'
 import Button from './../ui/Button'
 import { setForm } from '../../redux/actions'
+import { SelectProps } from '../../utils/interfaces'
 
 const defaultValues = [{ value: 'element', text: 'Элемент' }]
 
