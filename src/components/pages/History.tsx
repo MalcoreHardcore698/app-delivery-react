@@ -117,7 +117,7 @@ export default () => {
         dispatch(forwardingNotes(page))
     }, [dispatch, page])
 
-    return (    
+    return (
         <div className="content">
             <Table columns={columns} data={data} />
             {(state.loading) && <Loading />}

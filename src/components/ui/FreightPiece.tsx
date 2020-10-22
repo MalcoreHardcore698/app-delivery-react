@@ -11,7 +11,7 @@ export default ({ index=0, register, errors, getValues }: any) => {
     const state: any = useSelector(state => state)
     const dispatch = useDispatch()
 
-    const freightPieces = state?.form?.freightPieces
+    const freightPieces = state.form?.freightPieces
     const freightPiece = (freightPieces) ? freightPieces[index] : null
     
     return (

@@ -211,6 +211,14 @@ input[disabled] {
   flex-wrap: nowrap;
 }
 
+.row.grid {
+  display: grid;
+}
+
+.row.col2 {
+  grid-template-columns: repeat(auto-fit, minmax(256px, 1fr));
+}
+
 .column {
   display: flex;
   flex-direction: column;

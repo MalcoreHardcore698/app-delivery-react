@@ -3,19 +3,19 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useModal } from 'react-modal-hook'
 import { Controller } from 'react-hook-form'
 import Select from 'react-select'
+import DatePicker from 'react-datepicker'
 import Form from './../ui/Form'
 import Row from './../ui/Row'
 import Column from './../ui/Column'
 import Subtitle from './../ui/Subtitle'
 import Field from './../ui/Field'
 import FieldSet from './../ui/FieldSet'
-import Input from './../ui/Input'
 import Button from './../ui/Button'
-import { setForm } from '../../redux/actions'
 import Loading from '../ui/Loading'
 import FreightPiece from '../ui/FreightPiece'
 import Member from '../ui/Member'
 import Templates from '../modals/Templates'
+import { setForm } from '../../redux/actions'
 import { SelectProps } from '../../utils/interfaces'
 
 const defaultValues = [{ value: 'element', text: 'Элемент' }]
@@ -106,11 +106,9 @@ export default ({ jump, members }: any) => {
         <Form onSubmit={handleSubmit}>
             {({ register, errors, getValues, control }: any) => (
                 <React.Fragment>
-                    <Row>
-                        <Button onClick={showModal}>Загрузить из шаблона</Button>
-                    </Row>
+                    <Button onClick={showModal}>Загрузить из шаблона</Button>
 
-                    <Row stretch>
+                    <Row grid col2>
                         <Column>
                             <Subtitle text="Откуда *" />
 
@@ -163,13 +161,19 @@ export default ({ jump, members }: any) => {
                                 <Column>
                                     <Subtitle text="Дата экспедирования *" />
                                     <Field>
-                                        <Input
-                                            type="date"
+                                        <Controller
                                             name="forwardingDate"
-                                            inputRef={register({ required: true })}
-                                            classNames={(state.form && errors.forwardingDate) ? 'required' : ''}
+                                            control={control}
                                             defaultValue={state.form?.forwardingDate || null}
-                                            placeholder="Дата экспедирования"
+                                            rules={{ required: true }}
+                                            render={props => (
+                                                <DatePicker
+                                                    {...props}
+                                                    placeholderText="Дата экспедирования"
+                                                    selected={props.value}
+                                                    className={(state.form && errors.forwardingDate) ? 'required' : ''}
+                                                />
+                                            )}
                                         />
                                     </Field>
                                 </Column>
@@ -177,24 +181,46 @@ export default ({ jump, members }: any) => {
                                 <Column>
                                     <FieldSet title="Время забора *">
                                         <Field label="с">
-                                            <Input
-                                                type="time"
+                                            <Controller
                                                 name="timeFrom"
-                                                inputRef={register({ required: true })}
-                                                classNames={(state.form && errors.timeFrom) ? 'required' : ''}
+                                                control={control}
                                                 defaultValue={state.form?.timeFrom || null}
-                                                placeholder="Начало"
+                                                rules={{ required: true }}
+                                                render={props => (
+                                                    <DatePicker
+                                                        {...props}
+                                                        placeholderText="Начало"
+                                                        selected={props.value}
+                                                        showTimeSelect
+                                                        showTimeSelectOnly
+                                                        timeIntervals={5}
+                                                        timeCaption="Время"
+                                                        dateFormat="h:mm aa"
+                                                        className={(state.form && errors.timeFrom) ? 'required' : ''}
+                                                    />
+                                                )}
                                             />
                                         </Field>
 
                                         <Field label="до">
-                                            <Input
-                                                type="time"
+                                            <Controller
                                                 name="timeTo"
-                                                inputRef={register({ required: true })}
-                                                classNames={(state.form && errors.timeTo) ? 'required' : ''}
+                                                control={control}
                                                 defaultValue={state.form?.timeTo || null}
-                                                placeholder="Конец"
+                                                rules={{ required: true }}
+                                                render={props => (
+                                                    <DatePicker
+                                                        {...props}
+                                                        placeholderText="Конец"
+                                                        selected={props.value}
+                                                        showTimeSelect
+                                                        showTimeSelectOnly
+                                                        timeIntervals={5}
+                                                        timeCaption="Время"
+                                                        dateFormat="h:mm aa"
+                                                        className={(state.form && errors.timeTo) ? 'required' : ''}
+                                                    />
+                                                )}
                                             />
                                         </Field>
                                     </FieldSet>
@@ -214,9 +240,7 @@ export default ({ jump, members }: any) => {
                         </React.Fragment>
                     )}
 
-                    <Row>
-                        <Button type="submit" classNames="accent">Далее</Button>
-                    </Row>
+                    <Button type="submit" classNames="accent">Далее</Button>
                 </React.Fragment>
             )}
         </Form>

@@ -37,7 +37,7 @@ export default ({ hideModal, setMore }: any) => {
                         {template.name}
                     </li>
                 )}
-            </ul> : <p>У вас нету сохраненных шаблонов</p>}
+            </ul> : <Row flex padding><p>У вас нету сохраненных шаблонов</p></Row>}
             <Row stretch>
                 <Button disabled={!id} onClick={handleSubmit}>Загрузить</Button>
                 <Button onClick={hideModal}>Отмена</Button>
