@@ -60,9 +60,15 @@ export default ({ back, jump, text="Отправить заказ" }: any) => {
                         <Definition text="Время" detail={(
                             <React.Fragment>
                                 <span>с </span>
-                                {state?.form?.timeFrom}
+                                {new Date(state?.form?.timeFrom).toLocaleTimeString('ru-RU', {
+                                    hour: 'numeric',
+                                    minute: '2-digit'
+                                })}
                                 <span> до </span>
-                                {state?.form?.timeTo}
+                                {new Date(state?.form?.timeTo).toLocaleTimeString('ru-RU', {
+                                    hour: 'numeric',
+                                    minute: '2-digit'
+                                })}
                             </React.Fragment>
                         )} />
                     </DefinitionList>}

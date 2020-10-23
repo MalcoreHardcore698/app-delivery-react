@@ -10,6 +10,7 @@ import {
     clearForm
 } from './actions'
 import { apiHost } from '../utils/config'
+import FreightPiece from '../components/ui/FreightPiece'
 
 // BEGIN AUTH
 export const auth = () => {
@@ -98,9 +99,7 @@ export const forwardingRequest = (id?: number) => {
                         isCrateRequired: data.isCrateRequired,
                         isCreateNew: data.isCreateNew,
                         isDeliveryRequired: data.isDeliveryRequired,
-                        isIncludeVAT: data.isIncludeVAT,
                         isSameDayForwarding: data.isSameDayForwarding,
-                        isSumIncludesVAT: data.isSumIncludesVAT,
                         isUrgentRequest: data.isUrgentRequest
                     }))
                 } else {
@@ -122,19 +121,23 @@ export const forwardingRequestCreate = (form: any) => {
         senderId: form.sender.id,
         recipientId: form.recipient.id,
         tariffType: form.tariffType.value,
-        freightPieces: form.freightPieces,
+        freightPieces: form.freightPieces.map((freightPiece: any) => ({
+            ...freightPiece,
+            isTemperatureMode: !(freightPiece.isTemperatureMode === ''),
+            isOversizedFreight: !(freightPiece.isOversizedFreight === ''),
+            isFragileFreight: !(freightPiece.isFragileFreight === ''),
+            isPallet: !(freightPiece.isPallet === '')
+        })),
 
         forwardingDate: form.forwardingDate,
         timeFrom: form.timeFrom,
         timeTo: form.timeTo,
 
-        isCreateRequired: form.isCreateRequired,
-        isCreateNew: form.isCreateNew,
-        isDeliveryRequired: form.isDeliveryRequired,
-        isIncludeVAT: form.isIncludeVAT,
-        isSameDayForwarding: form.isSameDayForwarding,
-        isSumIncludesVAT: form.isSumIncludesVAT,
-        isUrgentRequest: form.isUrgentRequest
+        isCreateRequired: !(form.isCreateRequired === ''),
+        isCreateNew: !(form.isCreateNew === ''),
+        isDeliveryRequired: !(form.isDeliveryRequired === ''),
+        isSameDayForwarding: !(form.isSameDayForwarding === ''),
+        isUrgentRequest: !(form.isUrgentRequest === '')
     }
 
     return async (dispatch: any) => {

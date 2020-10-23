@@ -1,18 +1,28 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import Row from './../ui/Row'
 import Field from './../ui/Field'
 import FieldSet from './../ui/FieldSet'
 import Input from './../ui/Input'
 import Checkbox from './../ui/Checkbox'
-import { setForm } from '../../redux/actions'
 
-export default ({ index=0, register, errors, getValues }: any) => {
+export default ({ index=0, register, errors, setValue }: any) => {
     const state: any = useSelector(state => state)
-    const dispatch = useDispatch()
 
     const freightPieces = state.form?.freightPieces
     const freightPiece = (freightPieces) ? freightPieces[index] : null
+
+    const isError = () => {
+        const hasForm = state.form
+        const hasFreightPieces = errors?.freightPieces
+
+        return (hasForm && hasFreightPieces)
+    }
+
+    const isWeight = () => errors?.freightPieces[index]?.weight
+    const isLength = () => errors?.freightPieces[index]?.length
+    const isWidth = () => errors?.freightPieces[index]?.width
+    const isHeight = () => errors?.freightPieces[index]?.height
     
     return (
         <React.Fragment>
@@ -22,7 +32,7 @@ export default ({ index=0, register, errors, getValues }: any) => {
                         type="number"
                         name={`[freightPieces][${index}][weight]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[freightPieces][${index}][weight]`]) ? 'required' : ''}
+                        classNames={(isError() && isWeight()) ? 'required' : ''}
                         defaultValue={freightPiece?.weight}
                         placeholder="Вес"
                     />
@@ -33,7 +43,7 @@ export default ({ index=0, register, errors, getValues }: any) => {
                         type="number"
                         name={`[freightPieces][${index}][length]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[freightPieces][${index}][length]`]) ? 'required' : ''}
+                        classNames={(isError() && isLength()) ? 'required' : ''}
                         defaultValue={freightPiece?.length}
                         placeholder="Д"
                     />
@@ -41,7 +51,7 @@ export default ({ index=0, register, errors, getValues }: any) => {
                         type="number"
                         name={`[freightPieces][${index}][width]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[freightPieces][${index}][width]`]) ? 'required' : ''}
+                        classNames={(isError() && isWidth()) ? 'required' : ''}
                         defaultValue={freightPiece?.width}
                         placeholder="Ш"
                     />
@@ -49,7 +59,7 @@ export default ({ index=0, register, errors, getValues }: any) => {
                         type="number"
                         name={`[freightPieces][${index}][height]`}
                         inputRef={register({ required: true })}
-                        classNames={(state.form && errors[`[freightPieces][${index}][height]`]) ? 'required' : ''}
+                        classNames={(isError() && isHeight()) ? 'required' : ''}
                         defaultValue={freightPiece?.height}
                         placeholder="В"
                     />
@@ -72,16 +82,16 @@ export default ({ index=0, register, errors, getValues }: any) => {
                 />
             </Row>
 
-            {(state.form.freightPieces && state.form.freightPieces[index]) && <Checkbox
-                name="freightPiecesOpt"
-                inputRef={register()}
+            <Checkbox
+                register={register()}
+                onChange={(item: any) => setValue(item.value, item.checked)}
                 list={[
-                    { value: 'isTemperatureMode', label: 'Температурный режим' },
-                    { value: 'isOversizedFreight', label: 'Негабаритный груз' },
-                    { value: 'isFragileFreight', label: 'Хрупкий груз' },
-                    { value: 'isPalet', label: 'Это Палета' }
+                    { value: `[freightPieces][${index}][isTemperatureMode]`, label: 'Температурный режим', checked: freightPiece?.isTemperatureMode },
+                    { value: `[freightPieces][${index}][isOversizedFreight]`, label: 'Негабаритный груз', checked: freightPiece?.isOversizedFreight },
+                    { value: `[freightPieces][${index}][isFragileFreight]`, label: 'Хрупкий груз', checked: freightPiece?.isFragileFreight },
+                    { value: `[freightPieces][${index}][isPallet]`, label: 'Это Палета', checked: freightPiece?.isPallet }
                 ]}
-            />}
+            />
         </React.Fragment>
     )
 }

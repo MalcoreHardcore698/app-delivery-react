@@ -44,7 +44,7 @@ export default ({ back, jump }: any) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {({ control, getValues }: any) => (
+            {({ register, control, setValue, getValues }: any) => (
                 <React.Fragment>
                     <Button classNames="accent clear back" onClick={() => back()}>Назад</Button>
 
@@ -93,17 +93,14 @@ export default ({ back, jump }: any) => {
 
                         <Subtitle text="Дополнительные услуги" />
                         <Checkbox
-                            source={state.form}
-                            onChange={(e: any) => dispatch(setForm({
-                                ...getValues(),
-                                [e]: (state.form[e]) ? !state.form[e] : true
-                            }))}
+                            register={register()}
+                            onChange={(item: any) => setValue(item.value, item.checked)}
                             list={[
-                                { value: 'isCreateRequired', label: 'Обрешетка' },
-                                { value: 'isCreateNew', label: 'Доупаковка' },
-                                { value: 'isDeliveryRequired', label: 'Грузчики' },
-                                { value: 'isSameDayForwarding', label: 'Отправка день в день' },
-                                { value: 'isUrgentRequest', label: 'Срочная заявка' }
+                                { value: 'isCreateRequired', label: 'Обрешетка', checked: state.form?.isCreateRequired },
+                                { value: 'isCreateNew', label: 'Доупаковка', checked: state.form?.isCreateNew },
+                                { value: 'isDeliveryRequired', label: 'Грузчики', checked: state.form?.isDeliveryRequired },
+                                { value: 'isSameDayForwarding', label: 'Отправка день в день', checked: state.form?.isSameDayForwarding },
+                                { value: 'isUrgentRequest', label: 'Срочная заявка', checked: state.form?.isUrgentRequest }
                             ]}
                         />
                     </Column>

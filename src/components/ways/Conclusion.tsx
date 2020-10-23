@@ -19,7 +19,7 @@ export default ({ jump, text="Сохранить шаблон" }: any) => {
     const handleForwardingRequest = () => {
         dispatch(forwardingRequest())
         dispatch(clearForm())
-        jump('/forwarding')
+        jump('/')
     }
 
     if (state.loading && !state.form.id)

@@ -48,7 +48,6 @@ export default ({ jump, members }: any) => {
     , [destinationCityItemsList])
 
     const handleSubmit: any = (form: any) => {
-        if (isMore) jump('/addition')
         dispatch(setForm({
             ...form,
             sender: {
@@ -61,16 +60,17 @@ export default ({ jump, members }: any) => {
             }
         }))
         setMore(true)
+        if (isMore) jump('/addition')
     }
 
-    const handleAddPlace = (register: any, errors: any, getValues: any) => {
+    const handleAddPlace = (register: any, errors: any, setValue: any, getValues: any) => {
         dispatch(setForm(getValues()))
         setFreightPieces((prev: any) => ([
             ...prev, <FreightPiece
                 register={register}
                 errors={errors}
                 index={prev.length + 1}
-                getValues={getValues}
+                setValue={setValue}
             />
         ]))
     }
@@ -104,7 +104,7 @@ export default ({ jump, members }: any) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            {({ register, errors, getValues, control }: any) => (
+            {({ register, errors, control, setValue, getValues }: any) => (
                 <React.Fragment>
                     <Button onClick={showModal}>Загрузить из шаблона</Button>
 
@@ -143,7 +143,7 @@ export default ({ jump, members }: any) => {
                         </Column>
                     </Row>
             
-                    <FreightPiece register={register} errors={errors} getValues={getValues} />
+                    <FreightPiece register={register} errors={errors} setValue={setValue} getValues={getValues} />
 
                     {freightPieces.map((place: any, index: number) => (
                         <Column key={index} classNames="place">
@@ -153,7 +153,7 @@ export default ({ jump, members }: any) => {
                         </Column>
                     ))}
                     
-                    <Button onClick={() => handleAddPlace(register, errors, getValues)} classNames="accent clear small">Добавить еще место</Button>
+                    <Button onClick={() => handleAddPlace(register, errors, setValue, getValues)} classNames="accent clear small">Добавить еще место</Button>
 
                     {(isMore) && (
                         <React.Fragment>

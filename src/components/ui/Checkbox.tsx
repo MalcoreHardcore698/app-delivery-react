@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import InputHidden from './InputHidden'
+import InputHidden from '../ui/InputHidden'
 
 export default ({
     type,
-    name,
     list=[],
-    inputRef,
+    register,
     classNames,
     onChange
 }: any) => {
@@ -16,31 +15,29 @@ export default ({
         classNames, type
     ]
 
-    const [checked, setChecked] = useState([])
+    const [checklist, setChecklist] = useState(list)
 
     const handlerChecked = (item: any) => {
-        const founded: any = checked.find(el => el === item.value)
-        const result: any = (founded)
-            ? checked.filter(el => el !== item.value)
-            : ([ ...checked, item.value ])
-
-        if (onChange) onChange(result)
-        setChecked(result)
+        if (onChange) onChange({ ...item, checked: !item.checked })
+        setChecklist((prev: any) => prev.map((_item: any) => (_item.value === item.value) ? ({
+            ..._item,
+            checked: !_item.checked
+        }) : _item ))
     }
 
     return (
         <div className={classes.join(' ')}>
             <ul className="list">
-                {list.map((item: any, key: number) =>
-                    <li key={key} onClick={() => handlerChecked(item)} className={(checked.find(el => el === item.value)) ? 'checked' : 'empty'}>
+                {checklist.map((item: any, key: number) =>
+                    <li key={key} onClick={() => handlerChecked(item)} className={(item.checked) ? 'checked' : 'empty'}>
                         <div className="checkmark">
-                            {(checked.find(el => el === item.value)) && <FontAwesomeIcon icon={faCheck} />}
+                            {(item.checked) && <FontAwesomeIcon icon={faCheck} />}
                         </div>
                         <p>{item.label}</p>
                     </li>    
                 )}
             </ul>
-            <InputHidden name={name} inputRef={inputRef} />
+            {list.map((item: any, key: number) => <InputHidden key={key} name={item.value} inputRef={register} />)}
         </div>
     )
 }
