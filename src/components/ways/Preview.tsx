@@ -13,7 +13,7 @@ export default ({ back, jump, text="Отправить заказ" }: any) => {
 
     const handleAddToHistory = () => {
         dispatch(forwardingRequestCreate(state.form))
-        jump('/done')
+        jump('/conclusion')
     }
 
     return (

@@ -269,35 +269,35 @@ input[disabled] {
 }
 
 .group-radiobox,
-.group-checkbox {
+.checkbox .list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   grid-gap: calc(var(--gap-offset) - 5px);
 }
 
 .group-radiobox .radiobox,
-.group-checkbox .checkbox {
+.checkbox .list li {
   display: flex;
   grid-gap: calc(var(--gap-offset) - 5px);
 }
 
 .group-radiobox .radiobox,
-.group-checkbox .checkbox {
+.checkbox .list li {
   display: flex;
   align-items: center;
 }
 
 .group-radiobox .radiobox,
 .group-radiobox .radiobox label,
-.group-checkbox .checkbox,
-.group-checkbox .checkbox label {
+.checkbox .list li,
+.checkbox .list li p {
   color: var(--color-gray);
   cursor: pointer;
   transition: var(--transition);
 }
 
 .group-radiobox .radiobox .radiomark,
-.group-checkbox .checkbox .checkmark {
+.checkbox .list li .checkmark {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -317,7 +317,7 @@ input[disabled] {
 }
 
 .group-radiobox .radiobox.checked .radiomark,
-.group-checkbox .checkbox.checked .checkmark {
+.checkbox .list li.checked .checkmark {
   border: 1px solid var(--color-text);
   color: var(--color-text);
 }
@@ -325,9 +325,9 @@ input[disabled] {
 .group-radiobox .radiobox.checked,
 .group-radiobox .radiobox.checked label,
 .group-radiobox .radiobox.checked .radiomark,
-.group-checkbox .checkbox.checked,
-.group-checkbox .checkbox.checked label,
-.group-checkbox .checkbox.checked.checked .checkmark {
+.checkbox .list li.checked,
+.checkbox .list li.checked p,
+.checkbox .list li.checked .checkmark {
   color: var(--color-text);
 }
 

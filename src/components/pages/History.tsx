@@ -120,7 +120,7 @@ export default () => {
     return (
         <div className="content">
             <Table columns={columns} data={data} />
-            {(state.loading) && <Loading />}
+            {(state.loading && (state.history.length > 0)) && <Loading />}
         </div>
     )
 }

@@ -1,41 +1,46 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import InputHidden from './InputHidden'
 
-interface CheckmarkProps {
-    value: string,
-    label: string
-}
+export default ({
+    type,
+    name,
+    list=[],
+    inputRef,
+    classNames,
+    onChange
+}: any) => {
+    const classes = [
+        'checkbox',
+        classNames, type
+    ]
 
-interface CheckboxItemProps {
-    item: CheckmarkProps,
-    source?: any,
-    onChange?: any
-}
+    const [checked, setChecked] = useState([])
 
-interface CheckboxProps {
-    list: Array<CheckmarkProps>,
-    source?: any,
-    onChange?: any
-}
+    const handlerChecked = (item: any) => {
+        const founded: any = checked.find(el => el === item.value)
+        const result: any = (founded)
+            ? checked.filter(el => el !== item.value)
+            : ([ ...checked, item.value ])
 
-const Checkbox = ({ item, source, onChange }: CheckboxItemProps) => {
+        if (onChange) onChange(result)
+        setChecked(result)
+    }
+
     return (
-        <div className={`checkbox${(source[item.value]) ? ' checked' : ''}`} onClick={() => onChange(item.value)}>
-            <div className="checkmark">
-                {(source[item.value]) && <FontAwesomeIcon icon={faCheck} />}
-            </div>
-            <label>{item.label}</label>
-        </div>
-    )
-}
-
-export default ({ list, source, onChange }: CheckboxProps) => {
-    return (
-        <div className="group-checkbox">
-            {list.map((item: CheckmarkProps, index: number) =>
-                <Checkbox key={index} item={item} source={source} onChange={onChange} />    
-            )}
+        <div className={classes.join(' ')}>
+            <ul className="list">
+                {list.map((item: any, key: number) =>
+                    <li key={key} onClick={() => handlerChecked(item)} className={(checked.find(el => el === item.value)) ? 'checked' : 'empty'}>
+                        <div className="checkmark">
+                            {(checked.find(el => el === item.value)) && <FontAwesomeIcon icon={faCheck} />}
+                        </div>
+                        <p>{item.label}</p>
+                    </li>    
+                )}
+            </ul>
+            <InputHidden name={name} inputRef={inputRef} />
         </div>
     )
 }

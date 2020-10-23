@@ -73,24 +73,8 @@ export default ({ index=0, register, errors, getValues }: any) => {
             </Row>
 
             {(state.form.freightPieces && state.form.freightPieces[index]) && <Checkbox
-                source={state.form.freightPieces[index]}
-                onChange={(e: any) => dispatch(setForm({
-                    ...getValues(),
-                    freightPieces: state.form.freightPieces.map((freightPiece: any, key: number) => {
-                        const checkbox = freightPiece[e]
-
-                        return (index === key) ? ({
-                            ...state.form.freightPieces[key],
-                            weight: getValues(`[freightPieces][${key}][weight]`),
-                            length: getValues(`[freightPieces][${key}][length]`),
-                            width: getValues(`[freightPieces][${key}][width]`),
-                            height: getValues(`[freightPieces][${key}][height]`),
-                            description: getValues(`[freightPieces][${key}][description]`),
-                            amount: getValues(`[freightPieces][${key}][amount]`),
-                            [e]: (checkbox) ? !checkbox : true
-                        }) : freightPiece
-                    })
-                }))}
+                name="freightPiecesOpt"
+                inputRef={register()}
                 list={[
                     { value: 'isTemperatureMode', label: 'Температурный режим' },
                     { value: 'isOversizedFreight', label: 'Негабаритный груз' },

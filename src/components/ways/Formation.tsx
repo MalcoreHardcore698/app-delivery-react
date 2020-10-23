@@ -48,7 +48,7 @@ export default ({ jump, members }: any) => {
     , [destinationCityItemsList])
 
     const handleSubmit: any = (form: any) => {
-        if (isMore) jump('/services')
+        if (isMore) jump('/addition')
         dispatch(setForm({
             ...form,
             sender: {
