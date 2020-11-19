@@ -10,7 +10,6 @@ import {
     clearForm
 } from './actions'
 import { apiHost } from '../utils/config'
-import FreightPiece from '../components/ui/FreightPiece'
 
 // BEGIN AUTH
 export const auth = () => {

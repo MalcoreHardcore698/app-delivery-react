@@ -4,6 +4,7 @@ import Modal from 'react-modal'
 import Row from './../ui/Row'
 import Subtitle from './../ui/Subtitle'
 import Button from './../ui/Button'
+import Message from './../ui/Message'
 import { forwardingRequest, forwardingRequestTemplates } from '../../redux/creators'
 
 export default ({ hideModal, setMore }: any) => {
@@ -27,17 +28,23 @@ export default ({ hideModal, setMore }: any) => {
     return (
         <Modal isOpen>
             <Subtitle text="Выберите шаблон" />
-            {(state.templates.length > 0) ? <ul className="templates">
+            {(state.templates.length > 0) ? (
+              <ul className="templates">
                 {state.templates.map((template: any, index: number) =>
-                    <li
-                        key={index}
-                        className={`template${(id === template.id) ? ' checked' : ''}${(state.templates.length === 1) ? ' alone' : ''}`}
-                        onClick={() => setId((id === template.id) ? null : template.id)}
-                    >
-                        {template.name}
-                    </li>
+                  <li
+                      key={index}
+                      className={`template${(id === template.id) ? ' checked' : ''}${(state.templates.length === 1) ? ' alone' : ''}`}
+                      onClick={() => setId((id === template.id) ? null : template.id)}
+                  >
+                      {template.name}
+                  </li>
                 )}
-            </ul> : <Row flex padding><p>У вас нету сохраненных шаблонов</p></Row>}
+              </ul>
+            ) : (
+              <Row flex padding>
+                <Message text="У вас нету сохраненных шаблонов" />
+              </Row>
+            )}
             <Row stretch>
                 <Button disabled={!id} onClick={handleSubmit}>Загрузить</Button>
                 <Button onClick={hideModal}>Отмена</Button>

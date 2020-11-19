@@ -11,7 +11,7 @@ export default ({ isAuthenticated }: any) => {
     <React.Fragment>
         <Header isAuthenticated={isAuthenticated} />
         <Switch>
-            {(isAuthenticated) && (
+            {(!isAuthenticated) && (
                 <React.Fragment>
                     {routes.map((props: RouteProps, index: number) =>
                         <Route key={index} {...props} />
@@ -20,7 +20,7 @@ export default ({ isAuthenticated }: any) => {
                 </React.Fragment>
             )}
 
-            {(!isAuthenticated) && (
+            {(isAuthenticated) && (
                 <React.Fragment>
                     <Route exact path="/auth" render={() => <Auth />} />
                     <Redirect to="/auth" />

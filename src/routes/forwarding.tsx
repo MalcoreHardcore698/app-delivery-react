@@ -14,7 +14,7 @@ export default [
     {
         path: '/',
         component: ({ jump, back }: any) =>
-            <Formation jump={jump} back={back} members={members} />
+            <Formation jump={jump} back={back} members={members} template />
     },
     {
         path: '/addition',

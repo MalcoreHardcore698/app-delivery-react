@@ -106,6 +106,16 @@ textarea {
   border: none;
 }
 
+.message {
+  padding: 15px;
+  background: #e0e0e0;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  color: #a5a5a5;
+  width: 100%;
+  text-align: center;
+}
+
 .button, button, input, textarea, select,
 button:focus, input:focus,
 textarea:focus, select:focus {

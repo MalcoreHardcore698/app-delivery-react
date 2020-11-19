@@ -20,7 +20,7 @@ import { SelectProps } from '../../utils/interfaces'
 
 const defaultValues = [{ value: 'element', text: 'Элемент' }]
 
-export default ({ jump, members }: any) => {
+export default ({ jump, members, template=false }: any) => {
     const state: any = useSelector(state => state)
     const dispatch = useDispatch()
 
@@ -106,7 +106,7 @@ export default ({ jump, members }: any) => {
         <Form onSubmit={handleSubmit}>
             {({ register, errors, control, setValue, getValues }: any) => (
                 <React.Fragment>
-                    <Button onClick={showModal}>Загрузить из шаблона</Button>
+                    {(template) && <Button onClick={showModal}>Загрузить из шаблона</Button>}
 
                     <Row grid col2>
                         <Column>
